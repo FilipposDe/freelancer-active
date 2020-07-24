@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freelancer.com Active Projects</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Raleway&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    
+
+    <div id="app" v-bind:class="{red: isError, dark: theme === 'dark'}">
+
+        <div class="page">
+
+            <header v-bind:class="{red: isError}"> 
+                <img src="freelancer-logo.svg" alt="logo">
+                <span>Active Projects Filtered</span>
+                <p class="msg">
+                    {{ message }}
+                </p>
+                <button v-on:click="handleHelp" class="help-btn">?</button>
+                <div v-on:click="handleThemeChange" class="toggle-theme"></div>
+            </header>
+
+
+            <ul>
+                <li v-for="p in projects" class="card" v-on:click="handleSave(p)" v-bind:class="{saved: p.saved}">
+                    <p class="time">{{p.time}} |</p>
+                    <p class="client">Rating: {{p.clientRating.toFixed(1)}} Reviews: {{p.clientReviews}}</p>
+                    <h2>{{p.title}}</h2>
+                    <p class="desc">{{p.desc}}</p>
+                    <p class="bids">Bids: <strong>{{p.bids}}</strong></p>
+                    <p class="budget">
+                        Budget: {{p.budget}} {{p.currency}}, 
+                        Average Bid: {{p.avg ? p.avg.toFixed(1) : '-'}} {{p.currency}}</p>
+                    <a v-bind:href="p.url" @click.stop="(e)=>e.stopPropagation()">Go to Project</a>
+
+                    <div class="saved-tag"></div>
+
+                </li>
+            </ul>
+
+            <div class="loading-card spinning" v-if="loading"></div>
+
+            <button v-on:click="handleOpenSaved" class="open-all-btn" :disabled="savedCount=== 0" >{{savedCount}}</button>
+
+        </div>
+
+    </div>
+    <script src="config.js"></script>
+    <script src="apiKey.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+    <script>
+
+        // Configuration
+        var typesStr = ''
+        projectTypes.forEach( function ( type ) {
+            typesStr += "project_types[]=" + type + "&"
+        } )
+
+        var projectsUrl = `https://www.freelancer.com/api/projects/0.1/projects/active/?${ typesStr }compact=true&limit=100&sort_field=time_updated`
+        var clientsUrl1 = "https://www.freelancer.com/api/users/0.1/users/?employer_reputation=true&compact=true&"
+
+        
+        // Vue.js
+        var app = new Vue({
+            el: '#app',
+            data: {
+                page: 0,
+                message: '',
+                projects: [],
+                isError: false,
+                loading: false,
+                theme: 'light',
+                savedCount: 0,
+            },
+            methods: {
+                fetchNext: function() {
+
+                    if ( typeof key === 'undefined'  ) {
+                        this.message = "Please set the Freelancer.com API key at apiKey.js (see apiKey-example.js)"
+                        return
+                    }
+                   
+
+                    // Set loading indication
+                    this.message = ""
+                    this.loading = true
+                    this.isError = false
+
+                    // Fetch all projects
+                    fetch( `${projectsUrl}&offset=${ this.page * 100 }`, {
+                        method: "GET", headers: {
+                            "freelancer-oauth-v1": key,
+                        }
+                    } ).then( ( res => res.json() ) ).then( async res => {
+
+                        var clients = ''
+
+                        // Map response to custom project objects 
+                        var customProjectObjects = res.result.projects.map( p => {
+
+                            // Add project client to client list                        
+                            clients += "users[]=" + p.owner_id + '&'
+
+                            return {
+                                title: p.title,
+                                desc: p.preview_description + "...",
+                                budget: p.budget.minimum + " - " + p.budget.maximum,
+                                bids: p.bid_stats.bid_count,
+                                avg: p.bid_stats.bid_avg,
+                                currency: p.currency.sign,
+                                url: "https://www.freelancer.com/projects/" + p.seo_url,
+                                time: new Date( p.time_submitted * 1000 ).toLocaleString(),
+                                client: p.owner_id,
+
+                                saved: false
+                            }
+                        } )
+
+
+                        // Remove last ' & '
+                        clients = clients.substr( 0, clients.length - 1 )
+
+                        // Log string length
+                        console.log( '--- clients.length ---', clients.length )
+
+                        // Fetch all clients from projects
+                        fetch( `${clientsUrl1}${ clients }`, {
+                            method: "GET", headers: {
+                                "freelancer-oauth-v1": key,
+                            }
+                        } ).then( res => res.json() ).then( clientRes => {
+
+                            var clientsObj = clientRes.result.users
+                            
+                            // Populate new projects with required client data
+                            var customProjectObjectsPopulated = customProjectObjects.map( p => {
+
+                                var rep = clientsObj[ p.client ].employer_reputation.entire_history
+
+                                return {
+                                    ...p,
+                                    clientJobs: rep.all,
+                                    clientReviews: rep.reviews,
+                                    clientCompleted: rep.complete,
+                                    clientRating: rep.overall,
+                                    clientCountry: clientsObj[ p.client ].location.country.name,
+                                }
+                            } )
+
+                            // Filter new projects
+                            customProjectObjectsPopulated = customProjectObjectsPopulated.filter(p => 
+                                p.clientRating && p.clientRating > 0 &&
+                                p.bids < maxBids &&
+                                p.clientCountry !== "India"
+                            )
+
+                            // Add new projects to existing array
+                            this.projects = this.projects.concat(customProjectObjectsPopulated)
+                            
+                            // this.message = `OK (Results: ${this.projects.length})`
+                            this.page += 1
+                            this.loading = false
+
+                        } ). catch(e => {
+                            this.message = "ERROR! Check console"
+                            this.loading = false
+                            this.isError = true
+                            window.scrollTo(0, 0)
+                            console.log(e)
+                        })
+
+                        
+                    } ).catch( e => {
+                        this.message = "ERROR! Check console"
+                        this.loading = false
+                        this.isError = true
+                        window.scrollTo( 0, 0 )
+                        console.log( e )
+                    } )
+
+                },
+                setupInfiniteScroll: function() {
+                    window.onscroll = () => {
+                        var bottomOfWindow = document.documentElement.scrollTop + window.innerHeight + 300
+                            > document.documentElement.offsetHeight
+
+                        if ( bottomOfWindow && ! this.loading ) {
+                            // Prevent fetching if still loading
+                            this.fetchNext()
+                        }
+
+                    }
+                },
+                handleThemeChange: function() {
+                    // Toggle theme
+                    if ( this.theme === 'light' ) {
+                        this.theme = 'dark'
+                    } else {
+                        this.theme = 'light'
+                    }
+                },
+                handleSave: function( project ) {
+                    
+                    // Toggle saved status
+                    project.saved = ! project.saved
+                    
+                    // Update counter
+                    if ( project.saved ) {
+                        this.savedCount += 1
+                    } else {
+                        this.savedCount -= 1
+                    }
+                },
+                handleOpenSaved: function() {
+                    
+                    // Open saved projects in new window
+                    this.projects.forEach( function( project ) {
+                        if ( project.saved ){
+                            var win = window.open( project.url, '_blank' )
+                            if ( win ) {
+                                win.focus()
+                            } else {
+                                // When popups are blocked
+                                this.message = 'Please allow popups for this website'
+                            }
+                        }
+                    } )
+
+                    // Clear saved status of projects to open
+                    this.projects.forEach( function ( project ) {
+                        project.saved = false
+                    } )
+
+                    this.savedCount = 0
+                    
+                },
+                handleHelp: function() {
+                    alert("Click on a project card to save, click on the bottom right button to open saved projects in new tabs.")
+                }
+            },
+            mounted () {
+
+                this.setupInfiniteScroll()
+                this.fetchNext()
+                
+            }
+        })
+        
+        
+        
+</script>
+
+    
+        
+</body>
+</html>
+
+
+<!-- var win = window.open('http://stackoverflow.com/', '_blank');
+if (win) {
+//Browser has allowed it to be opened
+win.focus();
+} else {
+//Browser has blocked it
+alert('Please allow popups for this website');
+} -->
