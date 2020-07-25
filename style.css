@@ -101,6 +101,8 @@ button {
 header {
     padding: 20px 50px;
     background-color: var(--header-bg);
+    display: flex;
+    flex-flow: row wrap;
 }
 
 header img {
@@ -123,11 +125,21 @@ header .msg {
     font-weight: bold;
 }
 
+header>div {
+    width: 50%;
+    display: flex;
+}
+
+header .buttons {
+    justify-content: flex-end;
+}
+
 header .toggle-theme {
     position: relative;
     width: 50px;
     height: 30px;
-    float: right;
+    /* float: right; */
+    display: inline-block;
     border-radius: 15px;
     background-color: gray;
     cursor: pointer;
@@ -163,7 +175,8 @@ header .toggle-theme:before {
     border-radius: 50%;
     width: 30px;
     height: 30px;
-    float: right;
+    /* float: right; */
+    display: inline-block;
     margin: 0 20px;
     box-shadow: 0 0 10px var(--shadow);
     color: gray;
@@ -395,7 +408,16 @@ li a:visited {
 @media (max-width: 600px) {
 
     header {
-        padding: 20px 20px 65px;
+        padding: 20px 10px;
+        padding-left: 20px;
+    }
+
+    header>div {
+        width: 100%;
+    }
+
+    header .title {
+        justify-content: space-between;
     }
 
     header span {
