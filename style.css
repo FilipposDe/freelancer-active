@@ -6,7 +6,7 @@
     --link: rgb(0, 0, 238);
     --link-visited: rgb(131, 0, 238);
     --logo-bg: transparent;
-    --shadow: gray;
+    --shadow: rgb(155, 148, 148);
     --card-shadow: rgb(224, 224, 224);
     --opaque: rgba(255, 255, 255, 0.5);
     --opaque--mb: rgba(255, 255, 255, 0.8);
