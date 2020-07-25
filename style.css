@@ -114,15 +114,17 @@ header img {
 
 header span {
     font-family: "Quicksand";
-    line-height: 27px;
     vertical-align: text-bottom;
     padding-left: 30px;
+    position: relative;
+    top: 7px;
 }
 
 header .msg {
     line-height: 26px;
     float: right;
     font-weight: bold;
+    margin-top: 10px;
 }
 
 header>div {
@@ -421,6 +423,7 @@ li a:visited {
     }
 
     header span {
+        position: static;
         float: right;
         font-size: 14px;
         line-height: 27px;
