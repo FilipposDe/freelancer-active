@@ -140,7 +140,6 @@ header .toggle-theme {
     position: relative;
     width: 50px;
     height: 30px;
-    /* float: right; */
     display: inline-block;
     border-radius: 15px;
     background-color: gray;
@@ -177,10 +176,9 @@ header .toggle-theme:before {
     border-radius: 50%;
     width: 30px;
     height: 30px;
-    /* float: right; */
     display: inline-block;
     margin: 0 20px;
-    box-shadow: 0 0 10px var(--shadow);
+    /* box-shadow: 0 0 10px var(--shadow); */
     color: gray;
     font-size: 17px;
     font-family: "Quicksand";
@@ -302,7 +300,6 @@ li .saved-tag {
     width: 30px;
     height: 35px;
     background-color: rgb(201, 201, 201);
-    /* box-shadow: 0 5px 15px var(--shadow); */
     transform: translate(0, -46px);
     transition: transform 0.3s;
 }
@@ -327,12 +324,10 @@ li.saved .saved-tag {
 }
 
 .loading-card {
-    /* z-index: -1; */
     position: relative;
     margin: -270px auto;
     height: 200px;
     width: 50px;
-    /* background-color: var(--bg); */
     transition: all 0s;
 }
 
