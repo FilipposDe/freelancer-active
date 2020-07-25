@@ -9,6 +9,10 @@
     --shadow: gray;
     --card-shadow: rgb(224, 224, 224);
     --opaque: rgba(255, 255, 255, 0.5);
+    --opaque--mb: rgba(255, 255, 255, 0.8);
+    --scrollbar-thumb: #888;
+    --scrollbar-thumb-hover: #555;
+    --scrollbar-track: #f1f1f1;
 }
 
 #app.dark {
@@ -22,6 +26,27 @@
     --shadow: #000;
     --card-shadow: rgb(16, 16, 16);
     --opaque: rgba(255, 255, 255, 0.9);
+    --opaque-mb: rgba(255, 255, 255, 0.9);
+}
+
+[v-cloak] {
+    display: none;
+}
+
+::-webkit-scrollbar {
+    width: 17px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
 }
 
 html {
@@ -38,8 +63,6 @@ body {
 .page {
     background-color: var(--bg);
     color: var(--text);
-    /* position: absolute; */
-    /* overflow: hidden; */
 }
 
 .page:after {
@@ -57,7 +80,7 @@ body {
 .page *,
 .page,
 .page:after {
-    transition: background-color 1s, box-shadow 1s;
+    transition: background-color 1s, box-shadow 1s, box-shadow 1s;
 }
 
 h2,
@@ -69,6 +92,12 @@ a {
 
 }
 
+
+button {
+    cursor: pointer;
+    border: none;
+}
+
 header {
     padding: 20px 50px;
     background-color: var(--header-bg);
@@ -78,8 +107,6 @@ header img {
     width: 100px;
     background-color: var(--logo-bg);
     box-shadow: 0 0 0 10px var(--logo-bg);
-    transition: background-color 0s !important;
-    /* transition-duration: 0 !important; */
 }
 
 
@@ -144,10 +171,6 @@ header .toggle-theme:before {
     font-family: "Quicksand";
 }
 
-button {
-    cursor: pointer;
-    border: none;
-}
 
 button:focus {
     outline: none;
@@ -156,6 +179,7 @@ button:focus {
 header.red {
     background-color: rgb(255, 165, 165);
 }
+
 
 .open-all-btn {
     z-index: 2;
@@ -364,4 +388,37 @@ li a {
 
 li a:visited {
     color: var(--link-visited);
+}
+
+
+
+@media (max-width: 600px) {
+
+    header {
+        padding: 20px 20px 65px;
+    }
+
+    header span {
+        float: right;
+        font-size: 14px;
+        line-height: 27px;
+        padding-left: 16px;
+    }
+
+    .help-btn {
+        margin-right: 0;
+    }
+
+    .help-btn,
+    .toggle-theme {
+        margin-top: 10px;
+    }
+
+    li {
+        margin: 10px;
+    }
+
+    .open-all-btn {
+        background-color: var(--opaque--mb);
+    }
 }

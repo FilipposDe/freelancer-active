@@ -1,4 +1,4 @@
-var projectTypes = [ "fixed", "hourly" ]
+var projectTypes = [ "fixed" ]
 var maxBids = 15
-
+var excludeIndia = true
 

@@ -14,7 +14,7 @@
 
     <div id="app" v-bind:class="{red: isError, dark: theme === 'dark'}">
 
-        <div class="page">
+        <div v-cloak class="page">
 
             <header v-bind:class="{red: isError}"> 
                 <img src="freelancer-logo.svg" alt="logo">
@@ -160,7 +160,7 @@
                             customProjectObjectsPopulated = customProjectObjectsPopulated.filter(p => 
                                 p.clientRating && p.clientRating > 0 &&
                                 p.bids < maxBids &&
-                                p.clientCountry !== "India"
+                                ( excludeIndia ? p.clientCountry !== "India": true )
                             )
 
                             // Add new projects to existing array
@@ -239,6 +239,7 @@
                                 win.focus()
                             } else {
                                 // When popups are blocked
+                                alert( 'Please allow popups for this website' )
                                 this.message = 'Please allow popups for this website'
                             }
                         }
