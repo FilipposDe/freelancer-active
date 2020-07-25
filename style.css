@@ -24,6 +24,9 @@
     --opaque: rgba(255, 255, 255, 0.9);
 }
 
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     padding: 0;
@@ -52,7 +55,8 @@ body {
 
 
 .page *,
-.page {
+.page,
+.page:after {
     transition: background-color 1s, box-shadow 1s;
 }
 
@@ -61,7 +65,7 @@ p,
 span,
 button,
 a {
-    transition: color 1s !important;
+    transition: color 1s, box-shadow 1s, background-color 1s !important;
 
 }
 
@@ -89,6 +93,7 @@ header span {
 header .msg {
     line-height: 26px;
     float: right;
+    font-weight: bold;
 }
 
 header .toggle-theme {
@@ -153,6 +158,7 @@ header.red {
 }
 
 .open-all-btn {
+    z-index: 2;
     position: fixed;
     bottom: 30px;
     right: 30px;
@@ -165,6 +171,55 @@ header.red {
     line-height: 20px;
     font-size: 20px;
     font-family: "Quicksand";
+}
+
+.scroll-top-btn {
+    z-index: 2;
+    position: fixed;
+    bottom: 110px;
+    right: 40px;
+    width: 40px;
+    height: 40px;
+    color: var(--text-secondary);
+    box-shadow: 0 0 5px var(--shadow);
+    background-color: var(--opaque);
+    border-radius: 50%;
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s linear 0ms, opacity 300ms !important;
+
+}
+
+.scroll-top-btn.hidden {
+    opacity: 0.01;
+    visibility: hidden;
+    transition: visibility 0s linear 300ms, opacity 300ms !important;
+}
+
+.scroll-top-btn:before {
+    content: '';
+    position: absolute;
+    transform: rotate(45deg);
+    bottom: 16px;
+    left: 16px;
+    width: 2px;
+    height: 9px;
+    background-color: var(--text-secondary);
+    opacity: 0.6;
+
+}
+
+.scroll-top-btn:after {
+    content: '';
+    opacity: 0.6;
+    position: absolute;
+    transform: rotate(-45deg);
+    bottom: 16px;
+    left: 22px;
+    width: 2px;
+    height: 9px;
+    background-color: var(--text-secondary);
+
 }
 
 .open-all-btn:disabled {

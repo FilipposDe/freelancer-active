@@ -46,7 +46,9 @@
 
             <div class="loading-card spinning" v-if="loading"></div>
 
-            <button v-on:click="handleOpenSaved" class="open-all-btn" :disabled="savedCount=== 0" >{{savedCount}}</button>
+            <button v-on:click="handleOpenSaved" class="open-all-btn" :disabled="savedCount === 0" >{{savedCount}}</button>
+            
+            <button v-on:click="window.scrollTo(0, 0)" class="scroll-top-btn"></button>
 
         </div>
 
@@ -83,6 +85,7 @@
 
                     if ( typeof key === 'undefined'  ) {
                         this.message = "Please set the Freelancer.com API key at apiKey.js (see apiKey-example.js)"
+                        this.isError = true
                         return
                     }
                    
@@ -185,8 +188,10 @@
                     } )
 
                 },
-                setupInfiniteScroll: function() {
+                setupScroll: function() {
                     window.onscroll = () => {
+
+                        // Infinite scroll
                         var bottomOfWindow = document.documentElement.scrollTop + window.innerHeight + 300
                             > document.documentElement.offsetHeight
 
@@ -195,6 +200,13 @@
                             this.fetchNext()
                         }
 
+                        // Scroll to top
+                        if ( window.scrollY < 150 ) {
+                            document.querySelector( ".scroll-top-btn" ).classList.add( 'hidden' )
+                        } else {
+                            document.querySelector( ".scroll-top-btn" ).classList.remove( 'hidden' )
+                        }
+                        
                     }
                 },
                 handleThemeChange: function() {
@@ -242,11 +254,15 @@
                 },
                 handleHelp: function() {
                     alert("Click on a project card to save, click on the bottom right button to open saved projects in new tabs.")
+                },
+                setupScrollToTop: function() {
+                    
                 }
             },
             mounted () {
 
-                this.setupInfiniteScroll()
+                this.setupScroll()
+                // this.setupInfiniteScroll()
                 this.fetchNext()
                 
             }
@@ -260,13 +276,3 @@
         
 </body>
 </html>
-
-
-<!-- var win = window.open('http://stackoverflow.com/', '_blank');
-if (win) {
-//Browser has allowed it to be opened
-win.focus();
-} else {
-//Browser has blocked it
-alert('Please allow popups for this website');
-} -->
