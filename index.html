@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Freelancer.com Active Projects</title>
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet"> -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Raleway&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
@@ -50,11 +49,19 @@
                 </li>
             </ul>
 
+            <div class="filter" :class="[filterOpen ? 'on' : 'off']">
+                <h6>Filters</h6>
+                <p>Use words divided by space. New filters will be applied starting from the projects of the next scroll.</p>
+                <textarea id='filter-input' rows='4' v-model='filterValue' v-on:input="handleFilterChange" ></textarea>
+            </div>
+
             <div class="loading-card spinning" v-if="loading"></div>
 
-            <button v-on:click="handleOpenSaved" class="open-all-btn" :disabled="savedCount === 0" >{{savedCount}}</button>
+            <button v-on:click="handleOpenSaved" class="open-all-btn" :disabled="savedCount === 0" :class="[filterOpen ? 'hidden' : '']" >{{savedCount}}</button>
             
             <button v-on:click="window.scrollTo(0, 0)" class="scroll-top-btn"></button>
+
+            <button v-on:click="handleToggleFilter" class="open-filter-btn">F</button>
 
         </div>
 
@@ -85,6 +92,8 @@
                 loading: false,
                 theme: 'light',
                 savedCount: 0,
+                filterOpen: false,
+                filterValue: localStorage.getItem('filter'),
             },
             methods: {
                 fetchNext: function() {
@@ -126,7 +135,6 @@
                                 url: "https://www.freelancer.com/projects/" + p.seo_url,
                                 time: new Date( p.time_submitted * 1000 ).toLocaleString(),
                                 client: p.owner_id,
-
                                 saved: false
                             }
                         } )
@@ -163,10 +171,16 @@
                             } )
 
                             // Filter new projects
+                            var filterWords = this.filterValue.split(" ")
+                            for (let i = 0; i < filterWords.length; i++) {
+                                filterWords[i] = filterWords[i].toLowerCase()
+                            }
                             customProjectObjectsPopulated = customProjectObjectsPopulated.filter(p => 
                                 p.clientRating && p.clientRating > 0 &&
                                 p.bids < maxBids &&
-                                ( excludeIndia ? p.clientCountry !== "India": true )
+                                ( excludeIndia ? p.clientCountry !== "India": true ) &&
+                                !this.foundFilterWord( p.title, filterWords ) &&
+                                !this.foundFilterWord( p.desc, filterWords )
                             )
 
                             // Add new projects to existing array
@@ -262,20 +276,30 @@
                 handleHelp: function() {
                     alert("Click on a project card to save, click on the bottom right button to open saved projects in new tabs.")
                 },
-                setupScrollToTop: function() {
-                    
-                }
+                handleToggleFilter: function() {
+                    this.filterOpen = !this.filterOpen
+                },
+                handleFilterChange: function() {
+                    localStorage.setItem('filter', this.filterValue)
+                },
+                foundFilterWord: function( text, words ) {
+                    var textWords = text.split(' ')
+                    for (var i = 0; i < textWords.length; i++) {
+                        var textWord = textWords[i].toLowerCase()
+                        if ( words.includes( textWord ) ) return true
+                    }
+                    return false
+                },
             },
             mounted () {
 
                 this.setupScroll()
-                // this.setupInfiniteScroll()
                 this.fetchNext()
                 
             }
         })
         
-        
+   
         
 </script>
 

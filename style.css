@@ -190,7 +190,6 @@ header .toggle-theme-handle:after {
 }
 
 #app.dark header .toggle-theme-handle {
-    /* content: '\00A0\263D'; */
     font-size: 25px;
     transform: translate(20px, 0);
     transition: transform 0.2s;
@@ -203,7 +202,6 @@ header .toggle-theme-handle:after {
     height: 30px;
     display: inline-block;
     margin: 0 20px;
-    /* box-shadow: 0 0 10px var(--shadow); */
     color: gray;
     font-size: 17px;
     font-family: "Quicksand";
@@ -218,6 +216,22 @@ header.red {
     background-color: rgb(255, 165, 165);
 }
 
+.open-filter-btn {
+    z-index: 2;
+    position: fixed;
+    bottom: 110px;
+    right: 40px;
+    width: 40px;
+    height: 40px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    box-shadow: 0 0 5px var(--shadow);
+    background-color: var(--opaque);
+    border-radius: 50%;
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0s linear 0ms, opacity 300ms !important;
+}
 
 .open-all-btn {
     z-index: 2;
@@ -235,10 +249,14 @@ header.red {
     font-family: "Quicksand";
 }
 
+.open-all-btn.hidden {
+    right: -90px;
+}
+
 .scroll-top-btn {
     z-index: 2;
     position: fixed;
-    bottom: 110px;
+    bottom: 170px;
     right: 40px;
     width: 40px;
     height: 40px;
@@ -423,6 +441,38 @@ li a {
 
 li a:visited {
     color: var(--link-visited);
+}
+
+.filter {
+    position: fixed;
+    width: 100%;
+    bottom: -100%;
+    left: 0;
+    background: var(--bg);
+    padding: 20px;
+    box-shadow: 0 0 10px var(--shadow);
+    transition: bottom 300ms;
+    z-index: 1;
+}
+
+.filter.on {
+    bottom: 0;
+}
+
+.filter h6 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.filter p {
+    color: var(--text-secondary);
+    margin: 5px 0 10px;
+}
+
+.filter textarea {
+    width: calc(100% - 40px - 20px);
+    height: 80%;
+    padding: 10px;
 }
 
 
