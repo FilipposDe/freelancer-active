@@ -93,7 +93,7 @@
                 theme: 'light',
                 savedCount: 0,
                 filterOpen: false,
-                filterValue: localStorage.getItem('filter'),
+                filterValue: localStorage.getItem('filter') || "",
             },
             methods: {
                 fetchNext: function() {
