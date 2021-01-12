@@ -1,34 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
-import { useEffect, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react"
+import "./App.css"
 
-function App () {
+import { logoutUser, getFirestore } from "./services/firebase"
+import Filters from "./components/Filters"
+import Header from "./components/Header"
+import Login from "./components/Login"
+import Projects from "./components/Projects"
+import initApp, { useInit } from "./services/init"
 
 
-    const [ page, setPage ] = useState( 0 )
-    const [ message, setMessage ] = useState( '' )
+function App() {
+
+    // useReducer(reducer, initializerArg, initializer)
+
+    // const [ user, setUser] = useState( null )
+    // const [ userData, setUserData] = useState( {} )
+
+    const [ page, setPage] = useState( 0 )
+    const [ message, setMessage ] = useState( "" )
     const [ projects, setProjects ] = useState( [] )
     const [ isError, setIsError ] = useState( false )
     const [ loading, setLoading ] = useState( false )
-    const [ theme, setTheme ] = useState( 'light' )
+    const [ theme, setTheme ] = useState( "light" )
     const [ savedCount, setSavedCount ] = useState( 0 )
     const [ filterOpen, setFilterOpen ] = useState( false )
-    const [ filterValue, setFilterValue ] = useState( localStorage.getItem( 'filter' ) || "" )
+    const [ filterValue, setFilterValue ] = useState( localStorage.getItem( "filter" ) || "" )
 
-    const key = 'aaaaaaaaaaa'
+    const key = "aaaaaaaaaaa"
     const projectTypes = [ "fixed" ]
     const maxBids = 15
     const excludeIndia = true
 
-
-    useEffect( () => {
-        setupScroll()
-        fetchNext()
-    }, [] )
+    const { user, setUser, userData } = useInit(setLoading)
 
     // Configuration
-    let typesStr = ''
-    projectTypes.forEach( function ( type ) {
+    let typesStr = ""
+    projectTypes.forEach( function( type ) {
         typesStr += "project_types[]=" + type + "&"
     } )
 
@@ -39,9 +46,9 @@ function App () {
 
 
 
-    function fetchNext () {
+    function fetchNext() {
 
-        if ( typeof key === 'undefined' ) {
+        if ( typeof key === "undefined" ) {
             setMessage( "Please set the Freelancer.com API key at apiKey.js (see apiKey-example.js)" )
             setIsError( true )
             return
@@ -60,13 +67,13 @@ function App () {
             }
         } ).then( ( res => res.json() ) ).then( async res => {
 
-            let clients = ''
+            let clients = ""
 
             // Map response to custom project objects 
             let customProjectObjects = res.result.projects.map( project => {
 
                 // Add project client to client list                        
-                clients += "users[]=" + project.owner_id + '&'
+                clients += "users[]=" + project.owner_id + "&"
 
                 return {
                     title: project.title,
@@ -87,7 +94,7 @@ function App () {
             clients = clients.substr( 0, clients.length - 1 )
 
             // Log string length
-            console.log( '--- clients.length ---', clients.length )
+            console.log( "--- clients.length ---", clients.length )
 
             // Fetch all clients from projects
             fetch( `${ clientsUrl1 }${ clients }`, {
@@ -152,7 +159,7 @@ function App () {
 
     }
 
-    function setupScroll () {
+    function setupScroll() {
         window.onscroll = () => {
 
             // Infinite scroll
@@ -166,26 +173,26 @@ function App () {
 
             // Scroll to top
             if ( window.scrollY < 150 ) {
-                document.querySelector( ".scroll-top-btn" ).classList.add( 'hidden' )
+                document.querySelector( ".scroll-top-btn" ).classList.add( "hidden" )
             } else {
-                document.querySelector( ".scroll-top-btn" ).classList.remove( 'hidden' )
+                document.querySelector( ".scroll-top-btn" ).classList.remove( "hidden" )
             }
 
         }
     }
 
 
-    function handleThemeChange () {
+    function handleThemeChange() {
         // Toggle theme
-        if ( theme === 'light' ) {
-            setTheme( 'dark' )
+        if ( theme === "light" ) {
+            setTheme( "dark" )
         } else {
-            setTheme( 'light' )
+            setTheme( "light" )
         }
     }
 
 
-    function handleSave ( project ) {
+    function handleSave( project ) {
 
         // Toggle saved status
         project.saved = !project.saved
@@ -198,24 +205,24 @@ function App () {
         }
     }
 
-    function handleOpenSaved () {
+    function handleOpenSaved() {
 
         // Open saved projects in new window
-        projects.forEach( function ( project ) {
+        projects.forEach( function( project ) {
             if ( project.saved ) {
-                let win = window.open( project.url, '_blank' )
+                let win = window.open( project.url + "/details", "_blank" )
                 if ( win ) {
                     win.focus()
                 } else {
                     // When popups are blocked
-                    alert( 'Please allow popups for this website' )
-                    setMessage( 'Please allow popups for this website' )
+                    alert( "Please allow popups for this website" )
+                    setMessage( "Please allow popups for this website" )
                 }
             }
         } )
 
         // Clear saved status of projects to open
-        projects.forEach( function ( project ) {
+        projects.forEach( function( project ) {
             project.saved = false
         } )
 
@@ -224,22 +231,22 @@ function App () {
     }
 
 
-    function handleHelp () {
+    function handleHelp() {
         alert( "Click on a project card to save, click on the bottom right button to open saved projects in new tabs." )
     }
 
 
-    function handleToggleFilter () {
+    function handleToggleFilter() {
         setFilterOpen( !filterOpen )
     }
 
-    function handleFilterChange () {
-        localStorage.setItem( 'filter', filterValue )
+    function handleFilterChange() {
+        localStorage.setItem( "filter", filterValue )
     }
 
 
-    function foundFilterWord ( text, words ) {
-        let textWords = text.split( ' ' )
+    function foundFilterWord( text, words ) {
+        let textWords = text.split( " " )
         for ( let i = 0; i < textWords.length; i++ ) {
             let textWord = textWords[ i ].toLowerCase()
             if ( words.includes( textWord ) ) return true
@@ -247,56 +254,82 @@ function App () {
         return false
     }
 
+    async function handleLogout() {
+        await logoutUser()
+        setUser(null)
+    }
 
+
+
+    if ( !user ) {
+        return <Login />
+    }
 
 
 
     return (
-        <div>
 
-            {/* Header */ }
-            <header className={ isError ? 'red' : '' } >
-                <div className="title">
-                    <img src="freelancer-logo.svg" alt='logo' />
-                    <span>Active Projects Filtered</span>
-                </div>
-                <div class="buttons">
-                    <div onClick={ handleThemeChange } className="toggle-theme">
-                        <div className="toggle-theme-handle"></div>
-                    </div>
-                    <button onClick={ handleHelp } className="help-btn">?</button>
-                </div>
-                <p className="msg">
-                    { message }
-                </p>
-            </header>
-            <body>
+        <>
 
-               
-
-            <div className={`filter ${filterOpen ? 'on ' : 'off'}`} >
-                <h6>Filters</h6>
-                <p>Use words divided by space. New filters will be applied starting from the projects of the next scroll.</p>
-                <textarea id='filter-input' rows='4' value={filterValue} onChange={handleFilterChange} ></textarea>
-            </div>
-
-            { loading &&
-                <div className="loading-card spinning"></div>
-            }
-
-            <button onClick={handleOpenSaved} className={`open-all-btn ${filterOpen ? 'hidden' : ''}`} disabled={savedCount === 0}> {savedCount}</button>
-            
-            <button onClick={e => window.scrollTo(0, 0)} className="scroll-top-btn"></button>
-
-            <button onClick={handleToggleFilter} className="open-filter-btn">F</button>
+            <Header
+                isError={ isError}
+                message={ message}
+                handleThemeChange={ handleThemeChange}
+                handleHelp={ handleHelp}
+                handleLogout={ handleLogout}
+                projects={ projects}
+            />
 
 
-            </body>
-        </div>
-    );
+            <main>
+
+
+                <Projects
+                    projects={ projects }
+                    handleSave={ handleSave }
+                />
+
+
+                <Filters
+                    filterValue={ filterValue}
+                    filterOpen={ filterOpen}
+                    handleFilterChange={ handleFilterChange}
+                />
+
+
+                <button
+                    onClick={ handleOpenSaved }
+                    className={ `open-all-btn ${ filterOpen ? "hidden" : "" }` }
+                    disabled={ savedCount === 0 }
+                >
+                    { savedCount }
+                </button>
+
+                <button
+                    onClick={ e => window.scrollTo( 0, 0 ) }
+                    className="scroll-top-btn"
+                >
+                </button>
+
+                <button
+                    onClick={ handleToggleFilter }
+                    className="open-filter-btn"
+                >
+                    F
+                </button>
+
+
+
+                { loading &&
+                    <div className="loading-card spinning"></div>
+                }
+
+            </main>
+        </>
+    )
 }
 
-export default App;
+export default App
 
 
 // TODO Firebase
