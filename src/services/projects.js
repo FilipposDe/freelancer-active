@@ -1,23 +1,49 @@
 import { useEffect, useState } from "react"
 
-export function useProjects( config ) {
+export function useProjects( loading, setLoading ) {
 
 
     const [ page, setPage] = useState( 0 )
     const [ projects, setProjects ] = useState( [] )
-    const [ loading, setLoading ] = useState( false )
     const [ message, setMessage ] = useState( false )
 
+
+
     useEffect(() => {
+
+        window.addEventListener("scroll", () => {
+
+            // Infinite scroll
+            let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight + 300
+                > document.documentElement.offsetHeight
+
+            if ( bottomOfWindow && !loading ) {
+                // Prevent fetching if still loading
+                nextPage( )
+            }
+
+        })
         
-        if ( !config.apiKey ) {
+        if ( !process.env.REACT_APP_API_KEY ) {
             setMessage("Please set a Freelancer API Key in the configuration file")
             return
         }
         
-        init()
+        fetchNext()
+
+        
         
     }, [])
+
+
+    
+    useEffect(() => {
+        
+        fetchNext()
+        
+    }, [ page ])
+
+
     
     
     async function fetchNext() {
@@ -27,15 +53,24 @@ export function useProjects( config ) {
 
         try {
             
-            const apiProjects = await fetchNextBatch()
-            const { projects, clientsParam } = prepareProjects(apiProjects)
+            const apiProjectsArr = await fetchNextBatch()
+            
+            const { projects: projectObjArr, clientsParam } = prepareProjects(apiProjectsArr)
     
-            const apiClients = await fetchProjectsClients( clientsParam )
-        
-        
+            const apiClientsObj = await fetchProjectsClients( clientsParam )
+
+            const withClientData = projectObjArr.map( project => {
+                const client = apiClientsObj[ project.client ]
+                return addClientDataToProject(project, client)
+            } )
+            
+            const newList = [...projects, ...withClientData]
+            setProjects( newList )
 
             setLoading(false)
+
         } catch (error) {
+            console.error(error)
             setLoading(false)
             setMessage(error)
         }
@@ -45,15 +80,23 @@ export function useProjects( config ) {
     }
     async function fetchNextBatch() {
 
+        const typesParam = process.env.REACT_APP_PROJECT_TYPES.split(",")
+            .map( typeStr => `project_types[]=${ typeStr }&` )
+            .join("")
+
+        const projectsUrl = "https://www.freelancer.com/api/projects/0.1/projects/active/"
+        const apiItemsPerPage = 100
+
+        const uri = `${ projectsUrl }?${ typesParam }compact=true&limit=${ apiItemsPerPage }&sort_field=time_updated&offset=${ page * apiItemsPerPage }`
         
-        const projectsResult = await fetch( `${ config.projectsUrl }&offset=${ page * 100 }`, {
+        const projectsResult = await fetch( uri, {
             method: "GET", headers: {
-                "freelancer-oauth-v1": config.apiKey,
+                "freelancer-oauth-v1": process.env.REACT_APP_FL_API_KEY,
             }
         } )
 
         const projects = await projectsResult.json()
-        return projects.result || []
+        return projects.result.projects || []
         
     }
 
@@ -90,9 +133,11 @@ export function useProjects( config ) {
 
     async function fetchProjectsClients( param ) {
 
-        const clientsResult = await fetch( `${ config.clientsUrl }${ param }`, {
+        const clientsUrl = "https://www.freelancer.com/api/users/0.1/users/?employer_reputation=true&compact=true&"
+
+        const clientsResult = await fetch( `${ clientsUrl }${ param }`, {
             method: "GET", headers: {
-                "freelancer-oauth-v1": config.apiKey,
+                "freelancer-oauth-v1": process.env.REACT_APP_API_KEY,
             }
         } )
 
@@ -102,6 +147,30 @@ export function useProjects( config ) {
 
     }
 
-    return { projects, message, fetchNext }
+    function addClientDataToProject(project, client) {
+
+        let reputation = client.employer_reputation.entire_history
+
+        return {
+            ...project,
+            clientJobs: reputation.all || "3",
+            clientReviews: reputation.reviews || "3",
+            clientCompleted: reputation.complete || "3",
+            clientRating: reputation.overall || "3",
+            clientCountry: client.location.country.name || "3",
+        }
+    
+    }
+
+    function updateFilter( filter ) {
+        setProjects( projects.filter( filter ))
+    }
+
+    function nextPage() {
+        setPage( currPage => currPage + 1 )
+    }
+
+
+    return { projects, message, page, updateFilter }
 
 }

@@ -1,7 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 
-const Login = props => {
+const Overlay = props => {
     return (
         <div>
             Please login
@@ -10,8 +10,8 @@ const Login = props => {
     )
 }
 
-Login.propTypes = {
+Overlay.propTypes = {
 
 }
 
-export default Login
+export default Overlay

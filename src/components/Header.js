@@ -4,8 +4,6 @@ import PropTypes from "prop-types"
 const Header = ( props ) => {
     
     const {
-        isError, 
-        message, 
         handleThemeChange,
         handleHelp,
         handleLogout,
@@ -13,7 +11,7 @@ const Header = ( props ) => {
     
     
     return (
-        <header className={ isError ? "red" : "" } >
+        <header>
             <div className="title">
                 <img src="freelancer-logo.svg" alt='logo' />
                 <span>Active Projects Filtered</span>
@@ -31,7 +29,7 @@ const Header = ( props ) => {
                 </button>
             </div>
             <p className="msg">
-                { message }
+                {/* { message }  TODO */ }
             </p>
 
         </header>
@@ -40,9 +38,6 @@ const Header = ( props ) => {
 
 
 Header.propTypes = {
-    projects: PropTypes.arrayOf( PropTypes.object ).isRequired,
-    isError: PropTypes.bool.isRequired,
-    message: PropTypes.string.isRequired,
     handleThemeChange: PropTypes.func.isRequired,
     handleHelp: PropTypes.func.isRequired,
     handleLogout: PropTypes.func.isRequired,

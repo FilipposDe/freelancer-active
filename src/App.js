@@ -4,9 +4,10 @@ import "./App.css"
 import { logoutUser, getFirestore } from "./services/firebase"
 import Filters from "./components/Filters"
 import Header from "./components/Header"
-import Login from "./components/Login"
+import Overlay from "./components/Overlay"
 import Projects from "./components/Projects"
-import initApp, { useInit } from "./services/init"
+import { useInit } from "./services/init"
+import { useProjects } from "./services/projects"
 
 
 function App() {
@@ -16,160 +17,35 @@ function App() {
     // const [ user, setUser] = useState( null )
     // const [ userData, setUserData] = useState( {} )
 
-    const [ page, setPage] = useState( 0 )
-    const [ message, setMessage ] = useState( "" )
-    const [ projects, setProjects ] = useState( [] )
-    const [ isError, setIsError ] = useState( false )
+    
     const [ loading, setLoading ] = useState( false )
     const [ theme, setTheme ] = useState( "light" )
-    const [ savedCount, setSavedCount ] = useState( 0 )
-    const [ filterOpen, setFilterOpen ] = useState( false )
-    const [ filterValue, setFilterValue ] = useState( localStorage.getItem( "filter" ) || "" )
 
-    const key = "aaaaaaaaaaa"
-    const projectTypes = [ "fixed" ]
-    const maxBids = 15
-    const excludeIndia = true
+    const [ savedProjects, setSavedProjects ] = useState( {} )
 
-    const { user, setUser, userData } = useInit(setLoading)
-
-    // Configuration
-    let typesStr = ""
-    projectTypes.forEach( function( type ) {
-        typesStr += "project_types[]=" + type + "&"
-    } )
-
-    const projectsUrl = `https://www.freelancer.com/api/projects/0.1/projects/active/?${ typesStr }compact=true&limit=100&sort_field=time_updated`
-    const clientsUrl1 = "https://www.freelancer.com/api/users/0.1/users/?employer_reputation=true&compact=true&"
+    // const [ savedCount, setSavedCount ] = useState( 0 )
+    const [ isFilterOpen, setIsFilterOpen ] = useState( false )
 
 
+    
+
+    const { 
+        user, 
+        setUser, 
+        userData 
+    } = useInit(setLoading)
+
+    const { 
+        projects,
+        listMessage: message, 
+        updateFilter,
+    } = useProjects( loading, setLoading)
 
 
 
-    function fetchNext() {
+    useEffect(() => {
 
-        if ( typeof key === "undefined" ) {
-            setMessage( "Please set the Freelancer.com API key at apiKey.js (see apiKey-example.js)" )
-            setIsError( true )
-            return
-        }
-
-
-        // Set loading indication
-        setMessage( "" )
-        setLoading( true )
-        setIsError( false )
-
-        // Fetch all projects
-        fetch( `${ projectsUrl }&offset=${ page * 100 }`, {
-            method: "GET", headers: {
-                "freelancer-oauth-v1": key,
-            }
-        } ).then( ( res => res.json() ) ).then( async res => {
-
-            let clients = ""
-
-            // Map response to custom project objects 
-            let customProjectObjects = res.result.projects.map( project => {
-
-                // Add project client to client list                        
-                clients += "users[]=" + project.owner_id + "&"
-
-                return {
-                    title: project.title,
-                    desc: project.preview_description + "...",
-                    budget: project.budget.minimum + " - " + project.budget.maximum,
-                    bids: project.bid_stats.bid_count,
-                    avg: project.bid_stats.bid_avg,
-                    currency: project.currency.sign,
-                    url: "https://www.freelancer.com/projects/" + project.seo_url,
-                    time: new Date( project.time_submitted * 1000 ).toLocaleString(),
-                    client: project.owner_id,
-                    saved: false
-                }
-            } )
-
-
-            // Remove last ' & '
-            clients = clients.substr( 0, clients.length - 1 )
-
-            // Log string length
-            console.log( "--- clients.length ---", clients.length )
-
-            // Fetch all clients from projects
-            fetch( `${ clientsUrl1 }${ clients }`, {
-                method: "GET", headers: {
-                    "freelancer-oauth-v1": key,
-                }
-            } ).then( res => res.json() ).then( clientRes => {
-
-                let clientsObj = clientRes.result.users
-
-                // Populate new projects with required client data
-                let customProjectObjectsPopulated = customProjectObjects.map( project => {
-
-                    let rep = clientsObj[ project.client ].employer_reputation.entire_history
-
-                    return {
-                        ...project,
-                        clientJobs: rep.all,
-                        clientReviews: rep.reviews,
-                        clientCompleted: rep.complete,
-                        clientRating: rep.overall,
-                        clientCountry: clientsObj[ project.client ].location.country.name,
-                    }
-                } )
-
-                // Filter new projects
-                let filterWords = filterValue.split( " " )
-                for ( let i = 0; i < filterWords.length; i++ ) {
-                    filterWords[ i ] = filterWords[ i ].toLowerCase()
-                }
-                customProjectObjectsPopulated = customProjectObjectsPopulated.filter( project =>
-                    project.clientRating && project.clientRating > 0 &&
-                    project.bids < maxBids &&
-                    ( excludeIndia ? project.clientCountry !== "India" : true ) &&
-                    !foundFilterWord( project.title, filterWords ) &&
-                    !foundFilterWord( project.desc, filterWords )
-                )
-
-                // Add new projects to existing array
-                setProjects( projects.concat( customProjectObjectsPopulated ) )
-
-                // this.message = `OK (Results: ${this.projects.length})`
-                setPage( page + 1 )
-                setLoading( false )
-
-            } ).catch( e => {
-                setMessage( "ERROR! Check console" )
-                setLoading( false )
-                setIsError( true )
-                window.scrollTo( 0, 0 )
-                console.error( e )
-            } )
-
-
-        } ).catch( e => {
-            setMessage( "ERROR! Check console" )
-            setLoading( false )
-            setIsError( true )
-            window.scrollTo( 0, 0 )
-            console.error( e )
-        } )
-
-    }
-
-    function setupScroll() {
-        window.onscroll = () => {
-
-            // Infinite scroll
-            let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight + 300
-                > document.documentElement.offsetHeight
-
-            if ( bottomOfWindow && !loading ) {
-                // Prevent fetching if still loading
-                fetchNext()
-            }
+        window.addEventListener("scroll", () => {
 
             // Scroll to top
             if ( window.scrollY < 150 ) {
@@ -178,55 +54,35 @@ function App() {
                 document.querySelector( ".scroll-top-btn" ).classList.remove( "hidden" )
             }
 
-        }
+        })
+        
+    }, [])
+    
+    function onNewFilterFunction( filter ) {
+        updateFilter( filter )
     }
 
+ 
 
     function handleThemeChange() {
-        // Toggle theme
-        if ( theme === "light" ) {
-            setTheme( "dark" )
-        } else {
-            setTheme( "light" )
-        }
+        theme === "light" ? setTheme( "dark" ) : setTheme( "light" )
     }
 
 
     function handleSave( project ) {
-
-        // Toggle saved status
-        project.saved = !project.saved
-
-        // Update counter
-        if ( project.saved ) {
-            setSavedCount( savedCount + 1 )
-        } else {
-            setSavedCount( savedCount - 1 )
-        }
+        setSavedProjects({ ...savedProjects, [project.id]: project })
     }
 
     function handleOpenSaved() {
 
         // Open saved projects in new window
-        projects.forEach( function( project ) {
-            if ( project.saved ) {
-                let win = window.open( project.url + "/details", "_blank" )
-                if ( win ) {
-                    win.focus()
-                } else {
-                    // When popups are blocked
-                    alert( "Please allow popups for this website" )
-                    setMessage( "Please allow popups for this website" )
-                }
-            }
+        Object.keys(savedProjects).forEach( function( id ) {
+            let win = window.open( savedProjects[id].url + "/details", "_blank" )
+            if ( !win ) return alert( "Please allow popups for this website" )
+            win.focus()
         } )
 
-        // Clear saved status of projects to open
-        projects.forEach( function( project ) {
-            project.saved = false
-        } )
-
-        setSavedCount( 0 )
+        setSavedProjects( {} )
 
     }
 
@@ -237,22 +93,10 @@ function App() {
 
 
     function handleToggleFilter() {
-        setFilterOpen( !filterOpen )
+        setIsFilterOpen( !isFilterOpen )
     }
 
-    function handleFilterChange() {
-        localStorage.setItem( "filter", filterValue )
-    }
-
-
-    function foundFilterWord( text, words ) {
-        let textWords = text.split( " " )
-        for ( let i = 0; i < textWords.length; i++ ) {
-            let textWord = textWords[ i ].toLowerCase()
-            if ( words.includes( textWord ) ) return true
-        }
-        return false
-    }
+    
 
     async function handleLogout() {
         await logoutUser()
@@ -262,7 +106,7 @@ function App() {
 
 
     if ( !user ) {
-        return <Login />
+        return <Overlay />
     }
 
 
@@ -272,12 +116,9 @@ function App() {
         <>
 
             <Header
-                isError={ isError}
-                message={ message}
                 handleThemeChange={ handleThemeChange}
                 handleHelp={ handleHelp}
                 handleLogout={ handleLogout}
-                projects={ projects}
             />
 
 
@@ -289,20 +130,17 @@ function App() {
                     handleSave={ handleSave }
                 />
 
-
                 <Filters
-                    filterValue={ filterValue}
-                    filterOpen={ filterOpen}
-                    handleFilterChange={ handleFilterChange}
+                    className={ isFilterOpen ? "on" : "off" }
+                    handleNewFilterFunction={ onNewFilterFunction }
                 />
-
 
                 <button
                     onClick={ handleOpenSaved }
-                    className={ `open-all-btn ${ filterOpen ? "hidden" : "" }` }
-                    disabled={ savedCount === 0 }
+                    className={ `open-all-btn ${ isFilterOpen ? "hidden" : "" }` }
+                    disabled={ Object.keys(savedProjects).length === 0 }
                 >
-                    { savedCount }
+                    { Object.keys(savedProjects).length }
                 </button>
 
                 <button
@@ -330,15 +168,3 @@ function App() {
 }
 
 export default App
-
-
-// TODO Firebase
-// < !--The core Firebase JS SDK is always required and must be listed first-- >
-// <script src="/__/firebase/8.2.2/firebase-app.js"></script>
-
-// <!--TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries -->
-// <script src="/__/firebase/8.2.2/firebase-analytics.js"></script>
-
-// <!--Initialize Firebase-- >
-//     <script src="/__/firebase/init.js"></script>

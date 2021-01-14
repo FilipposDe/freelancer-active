@@ -84,8 +84,9 @@ export async function getUserDoc( user ) {
                 uid: user.uid,
                 email: user.email,
                 options: {},
-            // Avoid overwrite
             }
+            
+            // Merge to avoid overwrite
             await docRef.set( newData, { merge: true })
             return newData
 
