@@ -23,8 +23,6 @@ function App() {
 
     const [ savedProjects, setSavedProjects ] = useState( {} )
 
-    // const [ savedCount, setSavedCount ] = useState( 0 )
-    const [ isFilterOpen, setIsFilterOpen ] = useState( false )
 
 
     
@@ -92,12 +90,7 @@ function App() {
     }
 
 
-    function handleToggleFilter() {
-        setIsFilterOpen( !isFilterOpen )
-    }
-
     
-
     async function handleLogout() {
         await logoutUser()
         setUser(null)
@@ -125,19 +118,18 @@ function App() {
             <main>
 
 
+                <Filters
+                    handleNewFilterFunction={ onNewFilterFunction }
+                />
+
                 <Projects
                     projects={ projects }
                     handleSave={ handleSave }
                 />
 
-                <Filters
-                    className={ isFilterOpen ? "on" : "off" }
-                    handleNewFilterFunction={ onNewFilterFunction }
-                />
-
                 <button
                     onClick={ handleOpenSaved }
-                    className={ `open-all-btn ${ isFilterOpen ? "hidden" : "" }` }
+                    className={ "open-all-btn" }
                     disabled={ Object.keys(savedProjects).length === 0 }
                 >
                     { Object.keys(savedProjects).length }
@@ -148,14 +140,6 @@ function App() {
                     className="scroll-top-btn"
                 >
                 </button>
-
-                <button
-                    onClick={ handleToggleFilter }
-                    className="open-filter-btn"
-                >
-                    F
-                </button>
-
 
 
                 { loading &&

@@ -92,6 +92,8 @@ const Filters = ( props ) => {
 
     return (
         <div className={`filter ${props.className}`}>
+            <div className="filter-inner">
+
             <h6>Filters</h6>
             <p>Use words divided by space. New filters will be applied starting from the projects of the next scroll.</p>
             <textarea 
@@ -105,6 +107,7 @@ const Filters = ( props ) => {
                 >
                     APPLY
                 </button>
+            </div>
         </div>
     )
 }
