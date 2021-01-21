@@ -101,13 +101,10 @@ function App () {
 
             <main>
 
-                {/* 
-                    <Filters
-                        handleNewFilterFunction={ onNewFilterFunction }
-                        handleLoading={ setLoading }
-                    /> */}
+                
+                <Filters
+                />
 
-                <div>Filters here</div>
                 <Projects />
 
                 {/* <button

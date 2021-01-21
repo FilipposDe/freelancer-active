@@ -2,39 +2,76 @@
 import React, { useState } from "react"
 import PropTypes from "prop-types"
 import { useDispatch, useSelector } from "react-redux"
+import { F } from "../helpers/constants"
+import { updateFilters } from "../state/filters"
+import { parseSearchString,  joinSearchString } from "../helpers/searchString"
+
+
+const getFilterInputValues = filters => {
+    return {
+        ...filters,
+        [F.EXCLUDE_KEYWORDS]: joinSearchString(filters[F.EXCLUDE_KEYWORDS]),
+        [F.EXCLUDE_COUNTRIES]: joinSearchString(filters[F.EXCLUDE_COUNTRIES]),
+    }
+}
+
+const getFiltersFromInputs = inputFieldsData => {
+
+    const filters = {}
+    
+    Object.keys(inputFieldsData).forEach( key => {
+        
+        switch( key ) {
+            case F.EXCLUDE_KEYWORDS: 
+                filters[ key ] = parseSearchString( inputFieldsData[key] )
+                break 
+            case F.EXCLUDE_COUNTRIES: 
+                filters[ key ] = parseSearchString( inputFieldsData[key] )
+                break 
+            default: 
+                filters[ key ] = Number(inputFieldsData[key])
+        }
+    } )
+    
+    return filters
+
+
+}
 
 const Filters = ( props ) => {
 
     const { filters, loading, error } = useSelector(state => state.filters)
     const dispatch = useDispatch()
 
-    const handleChange = ( event, filterKey ) => {
 
-        let newFilterValue
+    const [fieldData, setFieldData] = useState(getFilterInputValues(filters))
 
-        switch( type ) {
+    const onChange = ( e ) => {
 
-            case F.KEYWORDS: 
-                // Dictionary of words
-                newFilterValue = {}
-                event.target.value.toLowerCase()
-                    .split(" ").forEach(word => {
-                        newFilterValue[word] = true
-                    })
-                break
-            default: 
-                newFilterValue = event.target.value
-                
-        }
+        setFieldData( {
+            ...fieldData,
+            [e.target.name]: e.target.value
+        })
+        
+        
+    }
+    
+    const onApply = e => {
+        e.preventDefault()
 
-        setFilters( {
-            ...filters, 
-            [type]: newFilterValue 
-        } )
-
+        const preparedFilters = getFiltersFromInputs( fieldData )
+        dispatch(updateFilters( preparedFilters ))
 
     }
 
+    
+    const onApplyOnAll = e => {
+        e.preventDefault()
+
+        const preparedFilters = getFiltersFromInputs( fieldData )
+        dispatch(updateFilters( preparedFilters ))
+
+    }
 
 
     return (
@@ -47,12 +84,12 @@ const Filters = ( props ) => {
                 <label htmlFor="max-bids">Max bids</label>
                 <input 
                     type='number' 
-                    name='max-bids' 
+                    name={F.MAX_BIDS} 
                     id="max-bids" 
                     max="999"
                     min="1"  
-                    value={filters.maxBids}
-                    onChange={ (e) => handleChange(e, F.MAX_BIDS)}  
+                    value={fieldData[F.MAX_BIDS]}
+                    onChange={ onChange }  
                 />
             </div>
 
@@ -60,28 +97,60 @@ const Filters = ( props ) => {
                 <label htmlFor="min-client-rating">Min. client rating</label>
                 <input 
                     type='number' 
-                    name='min-client-rating' 
+                    name={F.MIN_CLIENT_RATING} 
                     id="min-client-rating" 
                     max="5"
                     min="1"
-                    value={filters.minClientRating}
-                    onChange={ (e) => handleChange(e, F.MIN_CLIENT_RATING)}  
+                    value={fieldData[F.MIN_CLIENT_RATING]}
+                    onChange={ onChange }   
                 />
             </div>
-            {/* <p>Use words divided by space. New filters will be applied starting from the projects of the next scroll.</p>
-            <textarea 
-                id='filter-input' 
-                rows='4' 
-                value={ Object.keys(filters.keywords).join(" ") } 
-                onChange={ (e) => handleChange(e, F.KEYWORDS) } ></textarea>
+          
 
-                 */}
+            <div className='group'>
+                <label htmlFor="exclude-keywords">Exclude keywords</label>
+                <textarea 
+                    id='exclude-keywords' 
+                    rows='4' 
+                    value={ fieldData[F.EXCLUDE_KEYWORDS] } 
+                    name={F.EXCLUDE_KEYWORDS} 
+                    onChange={ onChange } >
+                </textarea>
+                
+                
+            </div>
+          
+          
+          
+
+            <div className='group'>
+                <label htmlFor="exclude-countries">Exclude countries</label>
+                <textarea 
+                    id='exclude-countries' 
+                    rows='4' 
+                    value={ fieldData[F.EXCLUDE_COUNTRIES] } 
+                    name={F.EXCLUDE_COUNTRIES} 
+                    onChange={ onChange } >
+                </textarea>
+                
+                
+            </div>
+          
+          
+          
+                
 
 
                 <button
                     onClick={onApply}
                 >
                     APPLY
+                </button>
+
+                <button
+                    onClick={onApplyOnAll}
+                >
+                    APPLY ON ALL
                 </button>
             </div>
         </div>
