@@ -1,31 +1,14 @@
 /* eslint-disable indent */
 import React, { useState } from "react"
 import PropTypes from "prop-types"
-
-const F = {
-    KEYWORDS: "keywords",
-    MAX_BIDS: "maxBids",
-    MIN_CLIENT_RATING: "minClientRating",
-    EXCLUDE_COUNTRIES: "excludeCountries",
-}
+import { useDispatch, useSelector } from "react-redux"
 
 const Filters = ( props ) => {
 
-    // TODO get options from firestore
-    const initialFilters = {
-        keywords: {},
-        maxBids: 15,
-        minClientRating: 1,
-        excludeCountries: ["India"],
-    }
+    const { filters, loading, error } = useSelector(state => state.filters)
+    const dispatch = useDispatch()
 
-    const [ filters, setFilters ] = useState( initialFilters )
-
-    const {
-        handleNewFilterFunction,
-    } = props
-
-    function handleChange( event, type ) {
+    const handleChange = ( event, filterKey ) => {
 
         let newFilterValue
 
@@ -46,61 +29,54 @@ const Filters = ( props ) => {
 
         setFilters( {
             ...filters, 
-            [F[type]]: newFilterValue 
+            [type]: newFilterValue 
         } )
 
 
     }
 
 
-    function onApply(e) {
-        e.preventDefault()
-
-        const filterFunction = project => {
-            
-            if ( filters.excludeCountries.length 
-                && filters.excludeCountries
-                    .includes(project.clientCountry) ) {
-                return false
-            }
-
-            if ( filters.minClientRating
-                && project.clientRating < filters.minClientRating ) {
-                return false
-            }
-
-            if ( filters.maxBids
-                && project.bids > filters.maxBids ) {
-                return false
-            }
-
-            if ( filters.keywords
-                && (   project.title.toLowerCase().split("")
-                            .some( word => filters.keywords[word] ) 
-                    || project.desc.toLowerCase().split("")
-                            .some( word => filters.keywords[word] )) ) {
-                return false
-            }
-
-            return true
-        }
-
-        handleNewFilterFunction( filterFunction )
-    }
-
-
 
     return (
-        <div className={`filter ${props.className}`}>
+        <div className={"filter"}>
             <div className="filter-inner">
 
             <h6>Filters</h6>
-            <p>Use words divided by space. New filters will be applied starting from the projects of the next scroll.</p>
+
+            <div className='group'>
+                <label htmlFor="max-bids">Max bids</label>
+                <input 
+                    type='number' 
+                    name='max-bids' 
+                    id="max-bids" 
+                    max="999"
+                    min="1"  
+                    value={filters.maxBids}
+                    onChange={ (e) => handleChange(e, F.MAX_BIDS)}  
+                />
+            </div>
+
+            <div className='group'>
+                <label htmlFor="min-client-rating">Min. client rating</label>
+                <input 
+                    type='number' 
+                    name='min-client-rating' 
+                    id="min-client-rating" 
+                    max="5"
+                    min="1"
+                    value={filters.minClientRating}
+                    onChange={ (e) => handleChange(e, F.MIN_CLIENT_RATING)}  
+                />
+            </div>
+            {/* <p>Use words divided by space. New filters will be applied starting from the projects of the next scroll.</p>
             <textarea 
                 id='filter-input' 
                 rows='4' 
                 value={ Object.keys(filters.keywords).join(" ") } 
                 onChange={ (e) => handleChange(e, F.KEYWORDS) } ></textarea>
+
+                 */}
+
 
                 <button
                     onClick={onApply}
@@ -113,8 +89,8 @@ const Filters = ( props ) => {
 }
 
 Filters.propTypes = {
-    className: PropTypes.string.isRequired,
     handleNewFilterFunction: PropTypes.func.isRequired,
+    handleLoading: PropTypes.func.isRequired,
 }
 
 

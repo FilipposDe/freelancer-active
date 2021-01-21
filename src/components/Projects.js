@@ -1,26 +1,30 @@
 import React from "react"
 import PropTypes from "prop-types"
+import useProjects from "./hooks/useProjects"
 
 
 const Projects = ( props ) => {
 
     const {
         projects,
-        handleSave,
-    } = props
+        ids,
+        loading,
+        error,
+    } = useProjects()
 
-
+    
     return (
         <div className="project-list">
 
             <ul>
-                { projects.map( (project, index) => {
+                { ids.map( id => {
+                    const project = projects[id]
                     return (
                         <li 
-                            key={index}
+                            key={id}
                             className={ `card ${ project.saved ? "saved " : "" }` }
-                            onClick={ e => handleSave( project ) } 
                         >
+                            {/* onClick={ e => handleSave( project ) }  */}
                             <p className="time">{ project.time } |</p>
                             <p className="client">Rating: { Number(project.clientRating).toFixed( 1 ) } Reviews: { project.clientReviews }</p>
                             <h2>{ project.title }</h2>
@@ -39,6 +43,13 @@ const Projects = ( props ) => {
 
                 }
             </ul>
+
+            
+            { loading &&
+                    <div className="loading-card spinning"></div>
+            }
+
+
         </div>
     )
 }
@@ -46,8 +57,7 @@ const Projects = ( props ) => {
 
 
 Projects.propTypes = {
-    projects: PropTypes.arrayOf( PropTypes.object ).isRequired,
-    handleSave: PropTypes.func.isRequired,
+    // handleSave: PropTypes.func.isRequired,
 }
 
 export default Projects

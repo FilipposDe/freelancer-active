@@ -1,105 +1,87 @@
-import React, { useEffect, useReducer, useState } from "react"
+import React, { createContext, useEffect, useState } from "react"
 import "./App.css"
 
-import { logoutUser, getFirestore } from "./services/firebase"
+import { logoutUser } from "./api/firebase"
 import Filters from "./components/Filters"
 import Header from "./components/Header"
-import Overlay from "./components/Overlay"
+import Login from "./components/Login"
 import Projects from "./components/Projects"
-import { useInit } from "./services/init"
-import { useProjects } from "./services/projects"
+import useInit from "./components/hooks/useInit"
+import { useDispatch, useSelector } from "react-redux"
+
+const scrollToTopListener = () => {
+    // Scroll to top
+    if ( window.scrollY < 150 ) {
+        document.querySelector( ".scroll-top-btn" ).classList.add( "hidden" )
+    } else {
+        document.querySelector( ".scroll-top-btn" ).classList.remove( "hidden" )
+    }
+
+}
+
+function App () {
 
 
-function App() {
+    useInit()
 
-    // useReducer(reducer, initializerArg, initializer)
-
-    // const [ user, setUser] = useState( null )
-    // const [ userData, setUserData] = useState( {} )
+    const user = useSelector( state => state.user.authenticatedUser)
 
     
-    const [ loading, setLoading ] = useState( false )
-    const [ theme, setTheme ] = useState( "light" )
+    // const [ theme, setTheme ] = useState( "light" )
 
-    const [ savedProjects, setSavedProjects ] = useState( {} )
-
-
-
-    
-
-    const { 
-        user, 
-        setUser, 
-        userData 
-    } = useInit(setLoading)
-
-    const { 
-        projects,
-        listMessage: message, 
-        updateFilter,
-    } = useProjects( loading, setLoading)
+    // // const [ savedProjects, setSavedProjects ] = useState( {} )
 
 
 
     useEffect(() => {
 
-        window.addEventListener("scroll", () => {
-
-            // Scroll to top
-            if ( window.scrollY < 150 ) {
-                document.querySelector( ".scroll-top-btn" ).classList.add( "hidden" )
-            } else {
-                document.querySelector( ".scroll-top-btn" ).classList.remove( "hidden" )
-            }
-
-        })
+        window.addEventListener("scroll", scrollToTopListener)
         
     }, [])
     
-    function onNewFilterFunction( filter ) {
-        updateFilter( filter )
-    }
+    // function onNewFilterFunction ( filter ) {
+    //     // updateFilter( filter )
+    // }
 
  
 
-    function handleThemeChange() {
-        theme === "light" ? setTheme( "dark" ) : setTheme( "light" )
-    }
+    // function handleThemeChange () {
+    //     theme === "light" ? setTheme( "dark" ) : setTheme( "light" )
+    // }
 
 
-    function handleSave( project ) {
-        setSavedProjects({ ...savedProjects, [project.id]: project })
-    }
+    // function handleSave ( project ) {
+    //     setSavedProjects({ ...savedProjects, [project.id]: project })
+    // }
 
-    function handleOpenSaved() {
+    // function handleOpenSaved () {
 
-        // Open saved projects in new window
-        Object.keys(savedProjects).forEach( function( id ) {
-            let win = window.open( savedProjects[id].url + "/details", "_blank" )
-            if ( !win ) return alert( "Please allow popups for this website" )
-            win.focus()
-        } )
+    //     // Open saved projects in new window
+    //     Object.keys(savedProjects).forEach( function ( id ) {
+    //         let win = window.open( savedProjects[id].url + "/details", "_blank" )
+    //         if ( !win ) return alert( "Please allow popups for this website" )
+    //         win.focus()
+    //     } )
 
-        setSavedProjects( {} )
+    //     setSavedProjects( {} )
 
-    }
+    // }
 
 
-    function handleHelp() {
+    function handleHelp () {
         alert( "Click on a project card to save, click on the bottom right button to open saved projects in new tabs." )
     }
 
 
     
-    async function handleLogout() {
+    async function handleLogout () {
         await logoutUser()
-        setUser(null)
     }
 
 
 
     if ( !user ) {
-        return <Overlay />
+        return <Login />
     }
 
 
@@ -108,32 +90,33 @@ function App() {
 
         <>
 
+            {/* <LoadingContext.Provider value={false}> */}
+
             <Header
-                handleThemeChange={ handleThemeChange}
                 handleHelp={ handleHelp}
                 handleLogout={ handleLogout}
             />
+            {/* handleThemeChange={ handleThemeChange} */}
 
 
             <main>
 
+                {/* 
+                    <Filters
+                        handleNewFilterFunction={ onNewFilterFunction }
+                        handleLoading={ setLoading }
+                    /> */}
 
-                <Filters
-                    handleNewFilterFunction={ onNewFilterFunction }
-                />
+                <div>Filters here</div>
+                <Projects />
 
-                <Projects
-                    projects={ projects }
-                    handleSave={ handleSave }
-                />
-
-                <button
-                    onClick={ handleOpenSaved }
-                    className={ "open-all-btn" }
-                    disabled={ Object.keys(savedProjects).length === 0 }
-                >
-                    { Object.keys(savedProjects).length }
-                </button>
+                {/* <button
+                        onClick={ handleOpenSaved }
+                        className={ "open-all-btn" }
+                        disabled={ Object.keys(savedProjects).length === 0 }
+                    >
+                        { Object.keys(savedProjects).length }
+                    </button> */}
 
                 <button
                     onClick={ e => window.scrollTo( 0, 0 ) }
@@ -142,11 +125,9 @@ function App() {
                 </button>
 
 
-                { loading &&
-                    <div className="loading-card spinning"></div>
-                }
-
             </main>
+            
+            {/* </LoadingContext.Provider> */}
         </>
     )
 }
