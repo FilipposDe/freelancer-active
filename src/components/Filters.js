@@ -64,15 +64,6 @@ const Filters = ( props ) => {
 
     }
 
-    
-    const onApplyOnAll = e => {
-        e.preventDefault()
-
-        const preparedFilters = getFiltersFromInputs( fieldData )
-        dispatch(updateFilters( preparedFilters ))
-
-    }
-
 
     return (
         <div className={"filter"}>
@@ -147,11 +138,7 @@ const Filters = ( props ) => {
                     APPLY
                 </button>
 
-                <button
-                    onClick={onApplyOnAll}
-                >
-                    APPLY ON ALL
-                </button>
+
             </div>
         </div>
     )

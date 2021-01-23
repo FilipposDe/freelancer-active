@@ -1,13 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import freelancerAPI from "../api/projects"
+import filterProject from "../helpers/filterProject"
+import normalizeProjects from "../helpers/normalize"
 
 
 export const fetchNextProjectsBatch = createAsyncThunk(
     "projects/fetchNextBatchStatus",
     async ( isInitial, { getState } ) => {
-        const { nextPage, freelancerFilters } = getState()
-        const { projects, ids } = await freelancerAPI.fetchNextBatch( nextPage, freelancerFilters )
-        return { projects, ids, isInitial }
+        const { nextPage } = getState().projects
+        const { filters } = getState().filters
+        const projects = await freelancerAPI.fetchNextBatch( nextPage )
+        const filteredProjects = projects
+            .filter( project => filterProject( project, filters) )
+        const { projects: normalizedProjects, ids } = normalizeProjects(filteredProjects)
+        const excludedCount = projects.length - ids.length
+        return { projects: normalizedProjects, ids, isInitial, excludedCount }
     }
 )
 
@@ -20,6 +27,7 @@ const projectsSlice = createSlice({
         projects: {},
         ids: [],
         nextPage: 0,
+        currExcludedCount: 0,
         loading: false,
         error: null
     },
@@ -33,6 +41,7 @@ const projectsSlice = createSlice({
     extraReducers: {
         [fetchNextProjectsBatch.pending]: (state, action) => {
             if ( state.loading ) return
+            state.currExcludedCount = 0
             state.loading = true
             state.error = null
         },
@@ -45,11 +54,13 @@ const projectsSlice = createSlice({
                 state.ids = []
                 state.projects = {}
                 state.nextPage = 0
+                state.currExcludedCount = 0
             }
 
             state.ids.push(...action.payload.ids)
             Object.assign(state.projects, action.payload.projects) 
             state.nextPage = state.nextPage + 1
+            state.currExcludedCount = action.payload.excludedCount
         },
         [fetchNextProjectsBatch.rejected]: (state, action) => {
             if (!state.loading) return 

@@ -103,9 +103,9 @@ main .filter {
 main .filter .filter-inner {
   position: -webkit-sticky;
   position: sticky;
-  top: 0;
+  top: 20px;
   left: 0;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 110px);
   margin-top: 20px;
   background: var(--bg);
   padding: 20px;

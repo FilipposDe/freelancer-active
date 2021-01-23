@@ -114,32 +114,32 @@ const fetchClients = async clientIds => {
 
 
 
-const prepareNormalizedProjects = ( projects, clients ) => {
+const prepareProjects = ( projects, clients ) => {
 
-    const ids = []
-        
     const clientMustHaveRep = process.env.REACT_APP_FL_CLIENT_SHOULD_HAVE_REP
     if ( !clientMustHaveRep ) throw new Error( "Not supported clients with no reputation" )
     
     
-    const normalizedProjects = projects.reduce( (obj, item) => {
+    const result = []
 
-        const client = clients[ item["owner_id"] ]
+    projects.forEach( project => {
+
+        const client = clients[ project["owner_id"] ]
         
         const clientRep = client.employer_reputation.entire_history
-        if ( clientMustHaveRep && !clientRep  ) return obj
+        if ( clientMustHaveRep && !clientRep  ) return
         
-        const properties = {
-            id: item.id,
-            title: item.title,
-            desc: item.preview_description + "...",
-            budget: item.budget.minimum + " - " + item.budget.maximum,
-            bids: item.bid_stats.bid_count,
-            avg: item.bid_stats.bid_avg,
-            currency: item.currency.sign,
-            url: "https://www.freelancer.com/projects/" + item.seo_url,
-            time: new Date( item.time_submitted * 1000 ).toLocaleString(),
-            client: item.owner_id,
+        const data = {
+            id: project.id,
+            title: project.title,
+            desc: project.preview_description + "...",
+            budget: project.budget.minimum + " - " + project.budget.maximum,
+            bids: project.bid_stats.bid_count,
+            avg: project.bid_stats.bid_avg,
+            currency: project.currency.sign,
+            url: "https://www.freelancer.com/projects/" + project.seo_url,
+            time: new Date( project.time_submitted * 1000 ).toLocaleString(),
+            client: project.owner_id,
             clientJobs: clientRep.all,
             clientReviews: clientRep.reviews,
             clientCompleted: clientRep.complete,
@@ -147,13 +147,11 @@ const prepareNormalizedProjects = ( projects, clients ) => {
             clientCountry: client.location.country.name,
         }
         
-        obj[ item.id ] = { ...properties }
-        ids.push( item.id )
-        return obj
+        result.push(data)
 
-    }, {}) 
+    }) 
 
-    return { projects: normalizedProjects, ids: ids }
+    return result
 }
 
 
@@ -168,7 +166,7 @@ const fetchNextBatch = async ( page, filters ) => {
 
     const clients = await fetchClients( clientIds )
 
-    const result = prepareNormalizedProjects( projects, clients )
+    const result = prepareProjects( projects, clients )
     return result
 }
 

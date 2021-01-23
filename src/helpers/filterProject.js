@@ -1,4 +1,4 @@
-export default function filterProjects ( project, filters) {
+export default function filterProject ( project, filters) {
 
     if ( filters.excludeCountries[project.clientCountry] ) {
         return false

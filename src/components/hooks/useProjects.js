@@ -3,16 +3,6 @@ import { clearProjects, fetchNextProjectsBatch } from "../../state/projects"
 import { useDispatch, useSelector } from "react-redux"
 
 
-const onWindowBottom = ( loading, dispatch) => {
-    // Infinite scroll
-    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight + 300
-        > document.documentElement.offsetHeight
-
-    if ( bottomOfWindow && !loading ) {
-        // Prevent fetching if still loading
-        dispatch( fetchNextProjectsBatch() )
-    }
-}
 
 export default function useProjects (  ) {
 
@@ -22,7 +12,15 @@ export default function useProjects (  ) {
 
     useEffect(() => {
 
-        window.addEventListener("scroll", () =>  onWindowBottom(loading, dispatch))
+        window.addEventListener("scroll", () =>  {
+            let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight + 300
+        > document.documentElement.offsetHeight
+
+            if ( bottomOfWindow && !loading ) {
+                // Prevent fetching if still loading
+                dispatch( fetchNextProjectsBatch() )
+            }
+        })
         
         if ( !process.env.REACT_APP_API_KEY ) {
             alert("Please set a Freelancer API Key in the configuration file")
