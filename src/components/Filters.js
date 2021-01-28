@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import React, { useState } from "react"
 import PropTypes from "prop-types"
 import { useDispatch, useSelector } from "react-redux"
@@ -22,14 +21,14 @@ const getFiltersFromInputs = inputFieldsData => {
     Object.keys(inputFieldsData).forEach( key => {
         
         switch( key ) {
-            case F.EXCLUDE_KEYWORDS: 
-                filters[ key ] = parseSearchString( inputFieldsData[key] )
-                break 
-            case F.EXCLUDE_COUNTRIES: 
-                filters[ key ] = parseSearchString( inputFieldsData[key] )
-                break 
-            default: 
-                filters[ key ] = Number(inputFieldsData[key])
+        case F.EXCLUDE_KEYWORDS: 
+            filters[ key ] = parseSearchString( inputFieldsData[key] )
+            break 
+        case F.EXCLUDE_COUNTRIES: 
+            filters[ key ] = parseSearchString( inputFieldsData[key] )
+            break 
+        default: 
+            filters[ key ] = Number(inputFieldsData[key])
         }
     } )
     
@@ -69,63 +68,63 @@ const Filters = ( props ) => {
         <div className={"filter"}>
             <div className="filter-inner">
 
-            <h6>Filters</h6>
+                <h6>Filters</h6>
 
-            <div className='group'>
-                <label htmlFor="max-bids">Max bids</label>
-                <input 
-                    type='number' 
-                    name={F.MAX_BIDS} 
-                    id="max-bids" 
-                    max="999"
-                    min="1"  
-                    value={fieldData[F.MAX_BIDS]}
-                    onChange={ onChange }  
-                />
-            </div>
+                <div className='group'>
+                    <label htmlFor="max-bids">Max bids</label>
+                    <input 
+                        type='number' 
+                        name={F.MAX_BIDS} 
+                        id="max-bids" 
+                        max="999"
+                        min="1"  
+                        value={fieldData[F.MAX_BIDS]}
+                        onChange={ onChange }  
+                    />
+                </div>
 
-            <div className='group'>
-                <label htmlFor="min-client-rating">Min. client rating</label>
-                <input 
-                    type='number' 
-                    name={F.MIN_CLIENT_RATING} 
-                    id="min-client-rating" 
-                    max="5"
-                    min="1"
-                    value={fieldData[F.MIN_CLIENT_RATING]}
-                    onChange={ onChange }   
-                />
-            </div>
+                <div className='group'>
+                    <label htmlFor="min-client-rating">Min. client rating</label>
+                    <input 
+                        type='number' 
+                        name={F.MIN_CLIENT_RATING} 
+                        id="min-client-rating" 
+                        max="5"
+                        min="1"
+                        value={fieldData[F.MIN_CLIENT_RATING]}
+                        onChange={ onChange }   
+                    />
+                </div>
           
 
-            <div className='group'>
-                <label htmlFor="exclude-keywords">Exclude keywords</label>
-                <textarea 
-                    id='exclude-keywords' 
-                    rows='4' 
-                    value={ fieldData[F.EXCLUDE_KEYWORDS] } 
-                    name={F.EXCLUDE_KEYWORDS} 
-                    onChange={ onChange } >
-                </textarea>
+                <div className='group'>
+                    <label htmlFor="exclude-keywords">Exclude keywords</label>
+                    <textarea 
+                        id='exclude-keywords' 
+                        rows='4' 
+                        value={ fieldData[F.EXCLUDE_KEYWORDS] } 
+                        name={F.EXCLUDE_KEYWORDS} 
+                        onChange={ onChange } >
+                    </textarea>
                 
                 
-            </div>
+                </div>
           
           
           
 
-            <div className='group'>
-                <label htmlFor="exclude-countries">Exclude countries</label>
-                <textarea 
-                    id='exclude-countries' 
-                    rows='4' 
-                    value={ fieldData[F.EXCLUDE_COUNTRIES] } 
-                    name={F.EXCLUDE_COUNTRIES} 
-                    onChange={ onChange } >
-                </textarea>
+                <div className='group'>
+                    <label htmlFor="exclude-countries">Exclude countries</label>
+                    <textarea 
+                        id='exclude-countries' 
+                        rows='4' 
+                        value={ fieldData[F.EXCLUDE_COUNTRIES] } 
+                        name={F.EXCLUDE_COUNTRIES} 
+                        onChange={ onChange } >
+                    </textarea>
                 
                 
-            </div>
+                </div>
           
           
           
@@ -145,7 +144,7 @@ const Filters = ( props ) => {
 }
 
 Filters.propTypes = {
-    handleNewFilterFunction: PropTypes.func.isRequired,
+    // handleNewFilterFunction: PropTypes.func.isRequired,
     handleLoading: PropTypes.func.isRequired,
 }
 

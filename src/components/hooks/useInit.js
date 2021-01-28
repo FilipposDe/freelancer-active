@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useDispatch } from "react-redux"
-import { initializeFirebase, setupFirebaseAuth, getUserDoc } from "../../api/firebase"
-import { loadUser, setAuthenticatedUser } from "../../state/user"
+import { initializeFirebase, setupFirebaseAuth } from "../../api/firebase"
+import { loadUser, startLoading } from "../../state/user"
 
 export default function useInit () {
 
@@ -15,6 +15,8 @@ export default function useInit () {
     
     
     useEffect(() => {
+        
+        dispatch( startLoading() ) 
         
         // Initialize Firebase
         initializeFirebase()

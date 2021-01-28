@@ -1,5 +1,4 @@
 import React from "react"
-import PropTypes from "prop-types"
 import useProjects from "./hooks/useProjects"
 
 
@@ -54,10 +53,5 @@ const Projects = ( props ) => {
     )
 }
 
-
-
-Projects.propTypes = {
-    // handleSave: PropTypes.func.isRequired,
-}
 
 export default Projects

@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { clearProjects, fetchNextProjectsBatch } from "../../state/projects"
 import { useDispatch, useSelector } from "react-redux"
+import { showSuccessToast } from "../../state/messages"
 
 
 
@@ -18,7 +19,12 @@ export default function useProjects (  ) {
 
             if ( bottomOfWindow && !loading ) {
                 // Prevent fetching if still loading
-                dispatch( fetchNextProjectsBatch() )
+                dispatch( fetchNextProjectsBatch() ).then( ({ payload }) => {
+                    const requestedLength = process.env.REACT_APP_FL_API_PROJECTS_PER_PAGE
+                    if ( payload.ids && requestedLength  ) {
+                        dispatch( showSuccessToast( `Showing ${payload.ids.length} projects out of ${requestedLength} fetched` ) )
+                    }
+                } )
             }
         })
         

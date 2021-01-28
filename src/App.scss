@@ -226,6 +226,22 @@ button {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+.toast {
+    z-index: 9;
+    opacity: 0;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color:rgb(13, 165, 13);
+    color: #fff;
+    padding: 10px;
+    transition: opacity 300ms linear;
+
+    &.show {
+        opacity: 1;
+    }
+}
+
 header {
     padding: 20px 50px;
     background-color: var(--header-bg);

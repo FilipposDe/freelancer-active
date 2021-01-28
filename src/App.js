@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react"
+import React from "react"
 import "./App.css"
 
 import { logoutUser } from "./api/firebase"
@@ -7,17 +7,8 @@ import Header from "./components/Header"
 import Login from "./components/Login"
 import Projects from "./components/Projects"
 import useInit from "./components/hooks/useInit"
-import { useDispatch, useSelector } from "react-redux"
-
-const scrollToTopListener = () => {
-    // Scroll to top
-    if ( window.scrollY < 150 ) {
-        document.querySelector( ".scroll-top-btn" ).classList.add( "hidden" )
-    } else {
-        document.querySelector( ".scroll-top-btn" ).classList.remove( "hidden" )
-    }
-
-}
+import { useSelector } from "react-redux"
+import Toast from "./components/Toast"
 
 function App () {
 
@@ -33,11 +24,6 @@ function App () {
 
 
 
-    useEffect(() => {
-
-        window.addEventListener("scroll", scrollToTopListener)
-        
-    }, [])
     
     // function onNewFilterFunction ( filter ) {
     //     // updateFilter( filter )
@@ -90,19 +76,21 @@ function App () {
 
         <>
 
-            {/* <LoadingContext.Provider value={false}> */}
+
+            <Toast />
 
             <Header
+                handleThemeChange={()=>{}}
                 handleHelp={ handleHelp}
                 handleLogout={ handleLogout}
             />
-            {/* handleThemeChange={ handleThemeChange} */}
 
 
             <main>
 
                 
                 <Filters
+                    handleLoading={()=>{}}
                 />
 
                 <Projects />
@@ -115,16 +103,10 @@ function App () {
                         { Object.keys(savedProjects).length }
                     </button> */}
 
-                <button
-                    onClick={ e => window.scrollTo( 0, 0 ) }
-                    className="scroll-top-btn"
-                >
-                </button>
 
 
             </main>
             
-            {/* </LoadingContext.Provider> */}
         </>
     )
 }

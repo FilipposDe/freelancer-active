@@ -26,7 +26,12 @@ const userSlice = createSlice({
         loading: false,
         error: null,
     },
-    reducers: {},
+    reducers: {
+        startLoading: (state, action) => {
+            if ( state.loading )  return
+            state.loading = true
+        }
+    },
     extraReducers: {
         [loadUser.pending]: (state, action) => {
             if ( state.loading ) return
@@ -50,6 +55,6 @@ const userSlice = createSlice({
     }
 })
 
-export const { clearUser } = userSlice.actions
+export const { startLoading } = userSlice.actions
 export default userSlice.reducer
 
