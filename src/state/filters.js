@@ -1,27 +1,25 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
+import dbAPI from "../api/db"
 import { F } from "../helpers/constants"
+import { updateFilters } from "./settingsCommon"
+import { loadUser } from "./user"
 
 
 const defaultFilters = {
-    [F.EXCLUDE_KEYWORDS]: [
-        "urine"
-    ],
-    [F.EXCLUDE_COUNTRIES]: [
-        "india"
-    ],
+    [F.EXCLUDE_KEYWORDS]: {
+        "urine": true
+    },
+    [F.EXCLUDE_COUNTRIES]: {
+        "india": true
+    },
+    [F.EXCLUDE_CATEGORIES]: {},
+    [F.EXCLUDE_CURRENCIES]: {
+        "inr": true
+    },
     [F.MAX_BIDS]: 15,
     [F.MIN_CLIENT_RATING]: 1,
 }
 
-
-export const updateFilters = createAsyncThunk(
-    "filters/patchFiltersStatus",
-    async ( filters, { getState } ) => {
-        // const { nextPage, freelancerFilters } = getState()
-        // const { projects, ids } = await freelancerAPI.fetchNextBatch( nextPage, freelancerFilters )
-        return { filters }
-    }
-)
 
 
 
@@ -51,7 +49,11 @@ const filtersSlice = createSlice({
             if (!state.loading) return 
             state.loading = false
             state.error = action.error
-        }
+        },
+        [loadUser.fulfilled]: (state, action) => {
+            const loadedFilters = action.payload.userData.settings.filters 
+            state.filters = loadedFilters || defaultFilters
+        },
     }
 })
 

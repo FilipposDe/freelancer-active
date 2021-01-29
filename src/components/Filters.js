@@ -2,15 +2,18 @@ import React, { useState } from "react"
 import PropTypes from "prop-types"
 import { useDispatch, useSelector } from "react-redux"
 import { F } from "../helpers/constants"
-import { updateFilters } from "../state/filters"
+import { updateFilters } from "../state/settingsCommon"
 import { parseSearchString,  joinSearchString } from "../helpers/searchString"
 
 
 const getFilterInputValues = filters => {
+    console.log(joinSearchString(filters[F.EXCLUDE_KEYWORDS]))
     return {
         ...filters,
         [F.EXCLUDE_KEYWORDS]: joinSearchString(filters[F.EXCLUDE_KEYWORDS]),
         [F.EXCLUDE_COUNTRIES]: joinSearchString(filters[F.EXCLUDE_COUNTRIES]),
+        [F.EXCLUDE_CATEGORIES]: joinSearchString(filters[F.EXCLUDE_CATEGORIES]),
+        [F.EXCLUDE_CURRENCIES]: joinSearchString(filters[F.EXCLUDE_CURRENCIES]),
     }
 }
 
@@ -25,6 +28,12 @@ const getFiltersFromInputs = inputFieldsData => {
             filters[ key ] = parseSearchString( inputFieldsData[key] )
             break 
         case F.EXCLUDE_COUNTRIES: 
+            filters[ key ] = parseSearchString( inputFieldsData[key] )
+            break 
+        case F.EXCLUDE_CATEGORIES: 
+            filters[ key ] = parseSearchString( inputFieldsData[key] )
+            break 
+        case F.EXCLUDE_CURRENCIES: 
             filters[ key ] = parseSearchString( inputFieldsData[key] )
             break 
         default: 
@@ -120,6 +129,29 @@ const Filters = ( props ) => {
                         rows='4' 
                         value={ fieldData[F.EXCLUDE_COUNTRIES] } 
                         name={F.EXCLUDE_COUNTRIES} 
+                        onChange={ onChange } >
+                    </textarea>
+                </div>
+
+                <div className='group'>
+                    <label htmlFor="exclude-categories">Exclude categories</label>
+                    <textarea 
+                        id='exclude-categories' 
+                        rows='4' 
+                        value={ fieldData[F.EXCLUDE_CATEGORIES] } 
+                        name={F.EXCLUDE_CATEGORIES} 
+                        onChange={ onChange } >
+                    </textarea>
+                </div>
+          
+
+                <div className='group'>
+                    <label htmlFor="exclude-currencies">Exclude currencies</label>
+                    <textarea 
+                        id='exclude-currencies' 
+                        rows='4' 
+                        value={ fieldData[F.EXCLUDE_CURRENCIES] } 
+                        name={F.EXCLUDE_CURRENCIES} 
                         onChange={ onChange } >
                     </textarea>
                 

@@ -1,14 +1,14 @@
 export function parseSearchString ( text) {
 
     const regex = /[^\s"]+|"([^"]*)"/gi
-    const items = []
+    const items = {}
     let match = null
 
     do {
 
         match = regex.exec(text)
         if (match !== null) {
-            items.push(match[1] ? match[1] : match[0])
+            items[match[1] ? match[1] : match[0]] = true
         }
     } while (match !== null)
 
@@ -16,9 +16,9 @@ export function parseSearchString ( text) {
 
 }
 
-export function joinSearchString ( keywordsArray ) {
+export function joinSearchString ( keywords ) {
 
-    const result = keywordsArray
+    const result = Object.keys(keywords)
         .map( phrase => phrase.includes(" ") ? `"${ phrase }"` : phrase )
         .join(" ")
     

@@ -1,4 +1,4 @@
-import { getUserDoc } from "./firebase"
+import { getUserDoc, updateUserDoc } from "./firebase"
 
 const fetchUserData = async ( user ) => {
     if ( !user?.uid || !user?.email  ) throw new Error("Authorized user was not provided")
@@ -7,8 +7,15 @@ const fetchUserData = async ( user ) => {
     return userData
 }
 
+const updateUserSettings = async ( user, settings ) => {
+    if ( !user?.uid || !user?.email  ) throw new Error("Authorized user was not provided")
+
+    await updateUserDoc(user, settings)
+}
+
 const dbAPI = {
-    fetchUserData
+    fetchUserData,
+    updateUserSettings,
 }
 
 export default dbAPI

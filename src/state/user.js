@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import dbAPI from "../api/db"
 import userAPI from "../api/user"
+import { updateFilters } from "./settingsCommon"
 
 
 
@@ -51,7 +52,10 @@ const userSlice = createSlice({
             state.error = action.error
             state.userData = null
             state.authenticatedUser = null
-        }
+        },
+        [updateFilters.fulfilled]: (state, action) => {
+            state.userData.filters = action.payload.filters
+        },
     }
 })
 

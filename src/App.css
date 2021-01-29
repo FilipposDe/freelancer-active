@@ -112,6 +112,7 @@ main .filter .filter-inner {
   -webkit-box-shadow: 0 0 10px var(--shadow);
           box-shadow: 0 0 10px var(--shadow);
   z-index: 1;
+  border-radius: 5px;
 }
 
 main .filter .filter-inner h6 {
@@ -162,6 +163,7 @@ main .project-list li {
   -webkit-box-shadow: 0 0 5px var(--card-shadow);
           box-shadow: 0 0 5px var(--card-shadow);
   overflow: hidden;
+  border-radius: 5px;
 }
 
 main .project-list li:hover {

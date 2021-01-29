@@ -99,6 +99,19 @@ export async function getUserDoc ( user ) {
 
 }
 
+export async function updateUserDoc ( user, newSettings ) {
+
+
+    const db = getFirestore()
+    const docRef = db.collection("users").doc( user.uid )
+    
+
+    await docRef.update({
+        settings: newSettings
+    })
+
+}
+
 
 
 

@@ -13,12 +13,12 @@ const Toast = props => {
         
         const fadeMessage = setTimeout(() => {
             setFade( true )
-        }, 4500)
+        }, 2500)
         
         const hideMessage = setTimeout(() => {
             dispatch( clearToast() )
             setFade(false)
-        }, 5000)
+        }, 3000)
 
         return () => {
             clearTimeout( fadeMessage )

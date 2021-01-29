@@ -43,17 +43,16 @@ export default function useProjects (  ) {
             dispatch( clearProjects() )
         }
         
-        dispatch( fetchNextProjectsBatch(true) )
+        dispatch( fetchNextProjectsBatch(true) ).then( ({ payload }) => {
+            const requestedLength = process.env.REACT_APP_FL_API_PROJECTS_PER_PAGE
+            if ( payload?.ids && requestedLength  ) {
+                dispatch( showSuccessToast( `Showing ${payload.ids.length} projects out of ${requestedLength} fetched` ) )
+            }
+        } )
         
     }, [ authenticatedUser ])
     
  
-
-    // function updateFilter ( filter ) {
-    //     setProjects( projects.filter( filter ))
-    // }
-
-    
 
     return { projects, ids, loading, error }
 
