@@ -1,4 +1,6 @@
-export function parseSearchString ( text) {
+export function parseSearchString ( value ) {
+
+    const text = value.toLowerCase()
 
     const regex = /[^\s"]+|"([^"]*)"/gi
     const items = {}
@@ -18,7 +20,8 @@ export function parseSearchString ( text) {
 
 export function joinSearchString ( keywords ) {
 
-    const result = Object.keys(keywords)
+
+    const result = Object.keys(keywords || {})
         .map( phrase => phrase.includes(" ") ? `"${ phrase }"` : phrase )
         .join(" ")
     

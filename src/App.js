@@ -2,13 +2,13 @@ import React from "react"
 import "./App.css"
 
 import { logoutUser } from "./api/firebase"
-import Filters from "./components/Filters"
 import Header from "./components/Header"
 import Login from "./components/Login"
 import Projects from "./components/Projects"
 import useInit from "./components/hooks/useInit"
 import { useSelector } from "react-redux"
 import Toast from "./components/Toast"
+import Filters from "./components/Filters"
 
 function App () {
 

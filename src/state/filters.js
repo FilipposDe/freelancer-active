@@ -13,6 +13,9 @@ const defaultFilters = {
         "india": true
     },
     [F.EXCLUDE_CATEGORIES]: {},
+    [F.EXCLUDE_NAMES]: {
+        "Crap": true
+    },
     [F.EXCLUDE_CURRENCIES]: {
         "inr": true
     },
@@ -51,7 +54,7 @@ const filtersSlice = createSlice({
             state.error = action.error
         },
         [loadUser.fulfilled]: (state, action) => {
-            const loadedFilters = action.payload.userData.settings.filters 
+            const loadedFilters = action.payload.userData?.settings?.filters 
             state.filters = loadedFilters || defaultFilters
         },
     }

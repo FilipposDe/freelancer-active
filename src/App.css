@@ -133,6 +133,7 @@ main .filter .filter-inner .group {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
+  position: relative;
 }
 
 main .filter .filter-inner .group input[type="number"] {
@@ -145,6 +146,40 @@ main .filter .filter-inner textarea {
   width: 100%;
   height: 50px;
   padding: 10px;
+}
+
+main .filter .filter-inner textarea + .filter-textarea-overlay {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 50px;
+  background-color: green;
+  z-index: 9999;
+}
+
+main .filter .filter-inner .filter-selection-add-container {
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  border: 1px solid red;
+}
+
+main .filter .filter-inner .filter-selection-add-container p {
+  margin: 0;
+  font-size: 12px;
+}
+
+main .filter .filter-inner .filter-selection-add-container button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 2px 15px;
+  margin-right: 45px;
+}
+
+main .filter .filter-inner .filter-selection-add-container button.keyword-cancel-btn {
+  margin-right: 5px;
 }
 
 main .project-list ul {

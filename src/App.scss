@@ -126,6 +126,7 @@ main {
             padding: 20px 0 0;
             display: flex;
             justify-content: space-between;
+            position: relative;
 
             input {
 
@@ -141,6 +142,40 @@ main {
             width: 100%;
             height: 50px;
             padding: 10px;
+        }
+
+        textarea+.filter-textarea-overlay {
+            position: absolute;
+            right: 0;
+            top: 10px;
+            bottom: 10px;
+            width: 50px;
+            background-color: green;
+            z-index: 9999;
+        }
+
+        .filter-selection-add-container {
+            width: 100%;
+            height: 50px;
+            padding: 10px;
+            border: 1px solid red;
+
+            p {
+                margin: 0;
+                font-size: 12px;
+            }
+
+            button {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                padding: 2px 15px;
+                margin-right: 45px;
+                
+                &.keyword-cancel-btn {
+                    margin-right: 5px;
+                }
+            }
         }
     }
 

@@ -8,6 +8,10 @@ export default function filterProject ( project, filters) {
         return false
     }
 
+    if (project.clientName.toLowerCase().split(" ").some( word => filters.excludeNames[word] )) {
+        return false
+    }
+    
     if ( filters.excludeCurrencies[project.currencyCode.toLowerCase()] ) {
         return false
     }
