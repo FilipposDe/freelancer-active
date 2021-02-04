@@ -13,8 +13,7 @@ const Header = ( props ) => {
     return (
         <header>
             <div className="title">
-                <img src="freelancer-logo.svg" alt='logo' />
-                <span>Active Projects Filtered</span>
+                <h1><b>Freelancer.com</b> Active Projects</h1>
             </div>
             <div className="buttons">
                 <div onClick={ handleThemeChange } className="toggle-theme">

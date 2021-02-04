@@ -57,8 +57,14 @@ const projectsSlice = createSlice({
                 state.currExcludedCount = 0
             }
 
-            state.ids.push(...action.payload.ids)
-            Object.assign(state.projects, action.payload.projects) 
+            action.payload.ids.forEach( id => {
+                if ( state.projects[id] ) return
+                state.ids.push(id)
+                state.projects[id] = action.payload.projects[id]
+            } )
+
+            // state.ids.push(...action.payload.ids)
+            // Object.assign(state.projects, action.payload.projects) 
             state.nextPage = state.nextPage + 1
             state.currExcludedCount = action.payload.excludedCount
         },

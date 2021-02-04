@@ -15,6 +15,7 @@ const getFilterInputValues = filters => {
         [F.EXCLUDE_CATEGORIES]: joinSearchString(filters[F.EXCLUDE_CATEGORIES]),
         [F.EXCLUDE_CURRENCIES]: joinSearchString(filters[F.EXCLUDE_CURRENCIES]),
         [F.EXCLUDE_NAMES]: joinSearchString(filters[F.EXCLUDE_NAMES]),
+        [F.LANGUAGES]: joinSearchString(filters[F.LANGUAGES]),
     }
 }
 
@@ -38,6 +39,9 @@ const getFiltersFromInputs = inputFieldsData => {
             filters[ key ] = parseSearchString( inputFieldsData[key] )
             break 
         case F.EXCLUDE_CURRENCIES: 
+            filters[ key ] = parseSearchString( inputFieldsData[key] )
+            break 
+        case F.LANGUAGES: 
             filters[ key ] = parseSearchString( inputFieldsData[key] )
             break 
         default: 
@@ -219,6 +223,16 @@ const Filters = ( props ) => {
                         isSelectedShown={isSelectedShown}
                         selectedText={selectedText}
                     />
+                </div>
+
+                <div className='group'>
+                    <label htmlFor={F.LANGUAGES}>Languages</label>
+                    <textarea
+                        id={F.LANGUAGES}
+                        name={F.LANGUAGES}
+                        value={fieldData[F.LANGUAGES]}
+                        onChange={onChange}
+                    ></textarea>
                 </div>
 
                 {/* <div className='group'>

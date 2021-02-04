@@ -41,7 +41,7 @@ const constructProjectsUrl = ( page, filters ) => {
     const typesParam = getTypesParam( allFilters.types )
 
     
-    const uri = `${ allFilters.url }?${ typesParam }&compact=true&limit=${ allFilters.projectsPerPage }&sort_field=time_updated&offset=${ page * allFilters.projectsPerPage }`
+    const uri = `${ allFilters.url }?${ typesParam }&compact=true&limit=${ allFilters.projectsPerPage }&sort_field=time_updated&offset=${ page * allFilters.projectsPerPage }&user_details=true&user_employer_reputation=true`
 
     return uri
 }
@@ -55,61 +55,20 @@ const fetchProjectsByPage = async (page, filters) => {
 
     const url = constructProjectsUrl( page, filters )
 
-    const projectsResult = await fetch( url, {
+    const response = await fetch( url, {
         method: "GET", headers: {
             "freelancer-oauth-v1": process.env.REACT_APP_FL_API_KEY,
         }
     } )
 
-    const projects = await projectsResult.json()
-    return projects.result.projects
+    const data = await response.json()
+
+    return { projects: data.result.projects, clients: data.result.users } 
 
 } 
 
 
-
-
-
-
-const extractClientIds = projects => {
-    return projects.map( project => project["owner_id"] )    
-
-}
-
-
-
-
-
-
-const getClientsUrlParam = clientIds => {
-    return clientIds
-        .map( id => "users[]=" + id + "&" )
-        .join("")    
-        .slice(0, -1)    
-
-}
-
-
-
-
-
-
-const fetchClients = async clientIds => {
-    const url = process.env.REACT_APP_FL_API_CLIENT_URL
-    const clientsUrlParam = getClientsUrlParam( clientIds )
-
-    const clientsResult = await fetch( `${ url }${ clientsUrlParam }`, {
-        method: "GET", headers: {
-            "freelancer-oauth-v1": process.env.REACT_APP_API_KEY,
-        }
-    } )
-
-    const clients = await clientsResult.json()
-    return clients.result.users
-
-}
-
-
+// REACT_APP_FL_API_CLIENT_URL=https://www.freelancer.com/api/users/0.1/users/?employer_reputation=true&compact=true&
 
 
 
@@ -141,6 +100,7 @@ const prepareProjects = ( projects, clients ) => {
             url: "https://www.freelancer.com/projects/" + project.seo_url,
             category: project.seo_url.split("/")[0].replaceAll("-", " "),
             time: new Date( project.time_submitted * 1000 ).toLocaleString(),
+            language: project.language,
             client: project.owner_id,
             clientName: client.public_name || "",
             clientJobs: clientRep.all,
@@ -154,23 +114,21 @@ const prepareProjects = ( projects, clients ) => {
 
     }) 
 
+    //     - users.25465.timezone.country
+    //     - users.25465.timezone.timezone
+
     return result
 }
 
 
 
 
-
-
 const fetchNextBatch = async ( page, filters ) => {
 
-    const projects = await fetchProjectsByPage( page, filters )
-    const clientIds = extractClientIds( projects )
-
-    const clients = await fetchClients( clientIds )
-
+    const { projects, clients } = await fetchProjectsByPage( page, filters )
     const result = prepareProjects( projects, clients )
     return result
+
 }
 
 

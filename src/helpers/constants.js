@@ -6,6 +6,7 @@ const filterKeys = {
     EXCLUDE_CATEGORIES: "excludeCategories",
     EXCLUDE_NAMES: "excludeNames",
     EXCLUDE_CURRENCIES: "excludeCurrencies",
+    LANGUAGES: "languages",
 }
 
 export const F = filterKeys

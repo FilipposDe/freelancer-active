@@ -21,6 +21,9 @@ const defaultFilters = {
     },
     [F.MAX_BIDS]: 15,
     [F.MIN_CLIENT_RATING]: 1,
+    [F.LANGUAGES]: {
+        "en": true
+    },
 }
 
 

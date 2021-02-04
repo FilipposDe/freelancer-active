@@ -32,7 +32,7 @@ const Projects = ( props ) => {
                             <p className="budget">
                             Budget: { project.budget } { project.currencySign } {project.currencyCode.toUpperCase()},
                         Average Bid: { project.avg ? Number(project.avg).toFixed( 1 ) : "-" } { project.currencySign }</p>
-                            <a href={ project.url } onClick={ ( e ) => e.stopPropagation() }>Go to Project</a>
+                            <a href={ project.url } target="_blank" rel="noreferrer" onClick={ ( e ) => e.stopPropagation() }>Go to Project</a>
 
                             <div className="saved-tag"></div>
 

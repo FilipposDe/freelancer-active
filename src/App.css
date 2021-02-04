@@ -1,13 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Raleway&display=swap");
 :root {
   --bg: #fff;
-  --header-bg: #e9f7ff;
+  --header-bg: #a8c6ff;
   --text: #000;
   --text-secondary: rgb(87, 87, 87);
   --link: rgb(0, 0, 238);
   --link-visited: rgb(131, 0, 238);
   --logo-bg: transparent;
-  --shadow: rgb(155, 148, 148);
+  --shadow: rgb(201, 193, 193);
   --card-shadow: rgb(224, 224, 224);
   --opaque: rgba(255, 255, 255, 0.5);
   --opaque--mb: rgba(255, 255, 255, 0.8);
@@ -86,6 +86,11 @@ body *, body:after {
   transition: background-color 1s, box-shadow 1s, box-shadow 1s, -webkit-box-shadow 1s, -webkit-box-shadow 1s;
 }
 
+body h1 {
+  font-weight: normal;
+  font-size: 1rem;
+}
+
 main {
   max-width: 1000px;
   margin: 0 auto;
@@ -109,8 +114,8 @@ main .filter .filter-inner {
   margin-top: 20px;
   background: var(--bg);
   padding: 20px;
-  -webkit-box-shadow: 0 0 10px var(--shadow);
-          box-shadow: 0 0 10px var(--shadow);
+  -webkit-box-shadow: 0 0 4px 1px var(--shadow);
+          box-shadow: 0 0 4px 1px var(--shadow);
   z-index: 1;
   border-radius: 5px;
 }
@@ -333,6 +338,9 @@ header > div {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 header .buttons {
