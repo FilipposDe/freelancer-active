@@ -13,7 +13,7 @@ const Projects = ( props ) => {
 
     
     return (
-        <div className="project-list">
+        <div className={`project-list ${loading && "loading"}`}>
 
             <ul>
                 { ids.map( id => {
@@ -44,6 +44,7 @@ const Projects = ( props ) => {
             
             </ul>
 
+            {/* { true && */}
             { loading &&
                 <div className="loading-card spinning"></div>
             }

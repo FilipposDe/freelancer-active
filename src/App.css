@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Raleway&display=swap");
 :root {
   --bg: #fff;
-  --header-bg: #a8c6ff;
-  --header-bg: #20345f;
+  --primary-bg: #a8c6ff;
+  --primary-bg: #20345f;
   --header-text: #fff;
   --text: #000;
   --text-secondary: rgb(87, 87, 87);
@@ -20,7 +20,7 @@
 
 #app.dark {
   --bg: #2f2f2f;
-  --header-bg: #272727;
+  --primary-bg: #272727;
   --header-text: #fff;
   --text: #fff;
   --text-secondary: rgb(169, 169, 169);
@@ -237,14 +237,14 @@ main .filter .filter-inner button.apply-filters-btn {
   width: 100%;
   height: 30px;
   margin-top: 10px;
-  background-color: #757575;
+  background-color: var(--primary-bg);
   color: #fff;
   font-weight: bold;
   font-family: "Quicksand";
 }
 
 main .filter .filter-inner button.apply-filters-btn:hover {
-  background-color: #9e9e9e;
+  background-color: #0b1221;
 }
 
 main .project-list ul {
@@ -316,6 +316,10 @@ main .project-list li.saved .saved-tag {
   transition: transform 0.3s, -webkit-transform 0.3s;
 }
 
+main .project-list.loading {
+  margin-bottom: 300px;
+}
+
 h2,
 p,
 span,
@@ -361,7 +365,7 @@ button {
 
 header {
   padding: 10px 50px;
-  background-color: var(--header-bg);
+  background-color: var(--primary-bg);
   color: var(--header-text);
   display: -webkit-box;
   display: -ms-flexbox;
@@ -408,6 +412,21 @@ header .buttons {
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+}
+
+header .log-out-btn {
+  border: 1px solid white;
+  background: none;
+  color: white;
+  padding: 5px 20px;
+  font-family: 'Quicksand';
+  -webkit-transition: background-color 300ms !important;
+  transition: background-color 300ms !important;
+}
+
+header .log-out-btn:hover {
+  background-color: white;
+  color: var(--text);
 }
 
 header .toggle-theme {
