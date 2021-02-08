@@ -130,7 +130,7 @@ const Filters = ( props ) => {
 
     return (
         <div className={"filter"}>
-            <form className="filter-inner" onSubmit={e => e.preventDefault}>
+            <form className={`filter-inner ${isSelectedShown && "visible"}`} onSubmit={e => e.preventDefault}>
 
                 <h6>Filters</h6>
 
@@ -160,7 +160,7 @@ const Filters = ( props ) => {
                     />
                 </div>
           
-                <div className='group'>
+                {/* <div className='group'>
                     <label htmlFor={F.EXCLUDE_KEYWORDS}>Exclude keywords</label>
                     <Textarea
                         name={F.EXCLUDE_KEYWORDS}
@@ -171,7 +171,7 @@ const Filters = ( props ) => {
                         isSelectedShown={isSelectedShown}
                         selectedText={selectedText}
                     />
-                </div>
+                </div> */}
           
                 <div className='group'>
                     <label htmlFor={F.EXCLUDE_COUNTRIES}>Exclude countries</label>
@@ -212,7 +212,7 @@ const Filters = ( props ) => {
                     />
                 </div>
 
-                <div className='group'>
+                {/* <div className='group'>
                     <label htmlFor={F.EXCLUDE_CURRENCIES}>Exclude currencies</label>
                     <Textarea
                         name={F.EXCLUDE_CURRENCIES}
@@ -223,7 +223,7 @@ const Filters = ( props ) => {
                         isSelectedShown={isSelectedShown}
                         selectedText={selectedText}
                     />
-                </div>
+                </div> */}
 
                 <div className='group'>
                     <label htmlFor={F.LANGUAGES}>Languages</label>
@@ -232,45 +232,17 @@ const Filters = ( props ) => {
                         name={F.LANGUAGES}
                         value={fieldData[F.LANGUAGES]}
                         onChange={onChange}
+                        autoCorrect="off"
+                        spellCheck="false"
                     ></textarea>
                 </div>
 
-                {/* <div className='group'>
-                    <label htmlFor="exclude-keywords">Exclude keywords</label>
-                    { isSelectedShown 
-                        ?
-                        <div className="filter-selection-add-container">
-                            <p>Add &quot;{selectedText}&quot; here</p>
-                            <button
-                                className="keyword-add-btn"
-                                onClick={ (e) => onAddToTextarea(e, F.EXCLUDE_KEYWORDS, selectedText) }
-                            >
-                                +
-                            </button>
-                            <button
-                                className="keyword-cancel-btn"
-                                onClick={onCancelSelection}
-                            >
-                                X
-                            </button>
-                        </div>
-                        :
-                        <textarea 
-                            id='exclude-keywords' 
-                            value={ fieldData[F.EXCLUDE_KEYWORDS] } 
-                            name={F.EXCLUDE_KEYWORDS} 
-                            onChange={ onChange } >
-                        </textarea>
-
-                    }
-                </div> */}
-          
-          
-          
+             
                 
 
 
                 <button
+                    className="apply-filters-btn"
                     onClick={onApply}
                 >
                     APPLY

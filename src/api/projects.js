@@ -107,9 +107,16 @@ const prepareProjects = ( projects, clients ) => {
             clientReviews: clientRep.reviews,
             clientCompleted: clientRep.complete,
             clientRating: clientRep.overall,
-            clientCountry: client.location.country.name,
+            clientCountry: client.location.country.name || client.timezone.country || client.timezone.timezone,
         }
-        
+
+
+        if ( Object
+            .keys(data)
+            .some( key => !["clientJobs", "clientCompleted", "clientReviews", "avg"].includes(key) 
+                    && typeof data[key] === "undefined" ) 
+        ) return console.error( data )
+
         result.push(data)
 
     }) 

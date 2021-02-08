@@ -21,7 +21,7 @@ export default function useProjects (  ) {
                 // Prevent fetching if still loading
                 dispatch( fetchNextProjectsBatch() ).then( ({ payload }) => {
                     const requestedLength = process.env.REACT_APP_FL_API_PROJECTS_PER_PAGE
-                    if ( payload.ids && requestedLength  ) {
+                    if ( payload?.ids && requestedLength  ) {
                         dispatch( showSuccessToast( `Showing ${payload.ids.length} projects out of ${requestedLength} fetched` ) )
                     }
                 } )

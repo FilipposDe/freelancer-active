@@ -41,11 +41,11 @@ const Projects = ( props ) => {
                 } )
 
                 }
+            
             </ul>
 
-            
             { loading &&
-                    <div className="loading-card spinning"></div>
+                <div className="loading-card spinning"></div>
             }
 
 

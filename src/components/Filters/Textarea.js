@@ -38,8 +38,10 @@ const Textarea = (props) => {
                     id={name} 
                     value={ value } 
                     name={name} 
-                    onChange={ onChange } >
-                </textarea>
+                    onChange={ onChange } 
+                    autoCorrect="off"
+                    spellCheck="false"
+                ></textarea>
 
             }
         </>
