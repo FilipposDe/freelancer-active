@@ -213,24 +213,34 @@ main .filter .filter-inner .filter-selection-add-container {
   margin-top: 5px;
   margin-bottom: 10px;
   padding: 5px;
-  border: 1px solid red;
-}
-
-main .filter .filter-inner .filter-selection-add-container p {
-  margin: 0;
-  font-size: 12px;
+  border: 1px solid #d64d4d;
+  position: relative;
 }
 
 main .filter .filter-inner .filter-selection-add-container button {
   position: absolute;
-  right: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+main .filter .filter-inner .filter-selection-add-container button.keyword-add-btn {
+  width: calc(100% - 60px);
+  left: 0;
   bottom: 0;
-  padding: 2px 15px;
-  margin-right: 45px;
+  top: 0;
+  background-color: #caeabc;
 }
 
 main .filter .filter-inner .filter-selection-add-container button.keyword-cancel-btn {
-  margin-right: 5px;
+  width: 60px;
+  background-color: #d64d4d;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 15px;
+  color: #fff;
+  font-weight: bold;
+  font-family: 'Quicksand';
 }
 
 main .filter .filter-inner button.apply-filters-btn {

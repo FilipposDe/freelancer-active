@@ -13,18 +13,18 @@ const Textarea = (props) => {
         onCancelSelection, 
     } = props
 
+    const displaySelectedText = selectedText.length > 20 ? selectedText.substr(0, 20) + "..." : selectedText
 
     return (
         <>
             { isSelectedShown 
                 ?
                 <div className="filter-selection-add-container">
-                    <p>Add &quot;{selectedText}&quot; here</p>
                     <button
                         className="keyword-add-btn"
                         onClick={ (e) => onAddToTextarea(e, name, selectedText) }
                     >
-                                +
+                        + &quot;{displaySelectedText}&quot;
                     </button>
                     <button
                         className="keyword-cancel-btn"
